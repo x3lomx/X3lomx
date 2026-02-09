@@ -31,6 +31,51 @@
 
         @keyframes twinkle { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
 
+        /* --- تصميم سيبراني فضائي جذاب للواجهة --- */
+        #login-screen {
+            position: relative;
+            overflow: hidden;
+            border: 2px solid var(--blue);
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.3), inset 0 0 15px rgba(0, 243, 255, 0.2);
+            animation: borderGlow 4s infinite alternate;
+        }
+
+        #login-screen h2 {
+            font-family: 'Orbitron', 'Cairo', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            animation: textPulse 2s infinite ease-in-out;
+        }
+
+        @keyframes borderGlow {
+            from { border-color: var(--blue); box-shadow: 0 0 20px rgba(0, 243, 255, 0.3); }
+            to { border-color: var(--purple); box-shadow: 0 0 30px rgba(188, 19, 254, 0.4); }
+        }
+
+        @keyframes textPulse {
+            0%, 100% { text-shadow: 0 0 10px var(--blue); transform: scale(1); }
+            50% { text-shadow: 0 0 20px var(--blue), 0 0 30px var(--blue); transform: scale(1.02); }
+        }
+
+        /* تحسين زر الدخول بشكل سيبراني */
+        .cyber-btn {
+            position: relative;
+            background: transparent !important;
+            border: 2px solid var(--blue) !important;
+            color: var(--blue) !important;
+            overflow: hidden;
+            z-index: 1;
+        }
+        .cyber-btn:before {
+            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 243, 255, 0.4), transparent);
+            transition: 0.5s; z-index: -1;
+        }
+        .cyber-btn:hover:before { left: 100%; }
+        .cyber-btn:hover { background: var(--blue) !important; color: #000 !important; box-shadow: 0 0 40px var(--blue); }
+
+        /* -------------------------------------- */
+
         .school-header { 
             text-align: center; padding: 30px 20px;
             background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(5px);
@@ -63,7 +108,8 @@
         .btn-outline { background: transparent; border: 1px solid var(--blue); color: var(--blue); }
         .btn-outline:hover { background: var(--blue); color: #000; }
 
-        input[type="text"] { padding: 15px; width: 85%; max-width: 350px; background: rgba(0,0,0,0.5); color: #fff; border: 1px solid var(--purple); border-radius: 12px; text-align: center; font-size: 1.1rem; margin-bottom: 20px; }
+        input[type="text"] { padding: 15px; width: 85%; max-width: 350px; background: rgba(0,0,0,0.5); color: #fff; border: 1px solid var(--purple); border-radius: 12px; text-align: center; font-size: 1.1rem; margin-bottom: 20px; outline: none; transition: 0.3s; }
+        input[type="text"]:focus { border-color: var(--blue); box-shadow: 0 0 15px var(--blue); }
 
         .option { background: rgba(255,255,255,0.08); padding: 15px; margin: 10px 0; border-radius: 12px; cursor: pointer; border: 1px solid transparent; text-align: right; transition: 0.2s; }
         .option:hover { background: rgba(0, 243, 255, 0.2); border-color: var(--blue); }
@@ -96,10 +142,12 @@
 <div class="main-wrapper">
     <div class="app-container">
         <div id="login-screen" class="card">
-            <h2 style="color: var(--blue); margin-bottom: 20px;">🛸 مختبر العلوم الافتراضي</h2>
+            <div style="font-size: 3rem; margin-bottom: 10px;">👨‍🚀</div>
+            <h2 style="color: var(--blue); margin-bottom: 25px;">مختبر العلوم الافتراضي</h2>
+            <p style="font-size: 0.8rem; color: var(--blue); margin-bottom: 20px; opacity: 0.8;">جاهز للرحلة العلمية؟ أدخل اسمك للبدء</p>
             <input type="text" id="stdName" placeholder="أدخل اسمك الثلاثي">
             <br>
-            <button class="btn" onclick="startApp()">دخول المختبر 🚀</button>
+            <button class="btn cyber-btn" onclick="startApp()">تشغيل المحركات والدخول 🚀</button>
         </div>
 
         <div id="tabs-container" style="display:none; text-align:center;">
