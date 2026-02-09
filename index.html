@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منصة معمل العلوم | مدرسة ذات الصواري</title>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root { --blue: #00f3ff; --purple: #bc13fe; --bg: #0b0e14; --green: #39ff14; --pink: #ff0055; }
+        body { background: var(--bg); color: #fff; font-family: 'Cairo', sans-serif; text-align: center; margin: 0; padding-bottom: 50px; }
+        
+        .school-header { 
+            background: linear-gradient(to bottom, rgba(188, 19, 254, 0.15), transparent);
+            padding: 25px 15px; border-bottom: 2px solid var(--purple); margin-bottom: 20px;
+        }
+        .school-header h1 { color: var(--blue); margin: 0; font-size: 1.8rem; text-shadow: 0 0 10px var(--blue); }
+        .highlight { color: var(--green); font-weight: bold; }
+
+        .app-container { max-width: 850px; margin: auto; padding: 10px; }
+        .card { background: rgba(255,255,255,0.05); padding: 30px; border-radius: 20px; border: 1px solid var(--blue); margin-top: 10px; }
+        .btn { background: var(--purple); color: #fff; border: none; padding: 12px 25px; border-radius: 8px; cursor: pointer; margin: 5px; font-weight: bold; transition: 0.3s; font-family: 'Cairo'; }
+        
+        .option { background: rgba(255,255,255,0.07); padding: 15px; margin: 10px 0; border-radius: 10px; cursor: pointer; border: 1px solid transparent; text-align: right; font-size: 1.1rem; }
+        .correct { background: var(--green) !important; color: #000; font-weight: bold; }
+        .wrong { background: var(--pink) !important; color: #fff; }
+        
+        .timer-container { width: 100%; background: #222; height: 8px; border-radius: 5px; margin-bottom: 20px; overflow: hidden; }
+        .timer-bar { height: 100%; background: linear-gradient(to right, var(--purple), var(--blue)); width: 100%; transition: 1s linear; }
+        #timerText { font-family: 'Orbitron'; color: var(--blue); font-size: 1.5rem; }
+
+        #result-screen { display: none; }
+        .send-section { background: #fff; color: #000; padding: 20px; border-radius: 20px; margin-top: 30px; border: 5px solid var(--green); }
+        .send-alert { font-size: 1.4rem; color: #ff0000; font-weight: bold; margin-bottom: 10px; animation: blink 1s infinite; }
+        @keyframes blink { 0% {opacity: 1;} 50% {opacity: 0.3;} 100% {opacity: 1;} }
+        
+        iframe { width: 100%; height: 550px; border: none; border-radius: 10px; }
+        #photo-card { background: linear-gradient(135deg, #0b0e14 0%, #1a1a2e 100%); padding: 40px; border-radius: 20px; border: 2px solid var(--blue); margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+
+<div class="school-header">
+    <h1>مدرسة ذات الصواري المتوسطة</h1>
+    <div style="margin-top:10px;">
+        <span>مدير المدرسة: <span class="highlight">أ. سهيل عقيلي</span></span> | 
+        <span>بإشراف: <span class="highlight">أ. ريان الاسمري</span></span>
+    </div>
+</div>
+
+<div class="app-container">
+    <div id="login-screen" class="card">
+        <h3 style="color: var(--blue)">🚀 دخول مختبر العلوم الذكي</h3>
+        <input type="text" id="stdName" placeholder="أدخل اسمك الثلاثي هنا" style="padding:15px; width:85%; background:#000; color:#fff; border:1px solid var(--purple); border-radius:10px; text-align: center; font-size: 1.1rem;">
+        <br><br>
+        <button class="btn" onclick="startApp()">ابدأ المختبر</button>
+    </div>
+
+    <div id="lab-interface" style="display:none;">
+        <div id="tabs" style="display:flex; flex-wrap:wrap; justify-content:center; gap:10px; margin-bottom:20px;"></div>
+        <div id="quiz-area" class="card">
+            <div id="timerText">30s</div>
+            <div class="timer-container"><div id="timerBar" class="timer-bar"></div></div>
+            <h2 id="qText">جاري تحميل الأسئلة...</h2>
+            <div id="optionsContainer"></div>
+        </div>
+
+        <div id="result-screen">
+            <div id="photo-card">
+                <h1 style="color: var(--green);">🎉 أحسنت يا بطل! 🎉</h1>
+                <h2 id="finalName"></h2>
+                <h3 id="finalLab" style="color: var(--blue);"></h3>
+                <div id="finalScore" style="font-family:'Orbitron'; font-size:4rem; color:var(--purple);"></div>
+                <p style="font-size:0.8rem; color:#aaa;">مدرسة ذات الصواري | مدير المدرسة أ. سهيل عقيلي</p>
+            </div>
+
+            <div style="margin-bottom: 30px;">
+                <button class="btn" style="background:var(--blue); color:#000;" onclick="takeScreenshot()">📸 حفظ صورة النتيجة</button>
+                <button class="btn" style="background:#25D366" onclick="goToWhatsApp()">📱 إرسال واتساب</button>
+            </div>
+
+            <div class="send-section">
+                <div class="send-alert">⚠️ خطوة هامة جداً ⚠️</div>
+                <p>اضغط على زر "إرسال" بالأسفل لتسجيل درجتك</p>
+                <iframe id="resForm" src=""></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // --- 🔗 الإعدادات المدمجة من قبلك يا أستاذ ريان ---
+    const SHEET_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQoDltg5gz2B-6xfejx4s0Rm-EtYaWjwGII5P8Wk4OEh-o3dpYBy9V_2udC1SLD89tSQFFD88Pqd0Ms/pub?gid=0&single=true&output=csv'; 
+    const FORM_BASE_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSd6qV0wUZIOTA3maN-KuBBhzivjeF0lCYD37-Ecr4FErVu6Xw/viewform'; 
+    const ENTRY_NAME = 'entry.851707482'; 
+    const ENTRY_SCORE = 'entry.1149023992'; 
+    // ----------------------------------------------
+
+    let allQuestions = [], studentName = "", score = 0, currentLab = "";
+    let timeLeft = 30, timerInterval;
+
+    function startApp() {
+        studentName = document.getElementById('stdName').value;
+        if(!studentName) return alert("فضلاً أدخل الاسم");
+        document.getElementById('login-screen').style.display = 'none';
+        document.getElementById('lab-interface').style.display = 'block';
+        fetchQuestions();
+    }
+
+    function fetchQuestions() {
+        Papa.parse(SHEET_CSV, { 
+            download: true, 
+            header: true, 
+            complete: (res) => { 
+                allQuestions = res.data.map(q => ({
+                    lab: q['المختبر'],
+                    question: q['السؤال'],
+                    correct: q['الإجابة الصحيحة'],
+                    wrong: q['إجابة خاطئة']
+                }));
+                renderTabs(); 
+            } 
+        });
+    }
+
+    function renderTabs() {
+        const labs = [...new Set(allQuestions.map(q => q.lab))];
+        const div = document.getElementById('tabs');
+        div.innerHTML = "";
+        labs.forEach(lab => { if(lab) div.innerHTML += `<button class="btn" onclick="runQuiz('${lab}')">${lab}</button>`; });
+        if(labs.length > 0) { document.getElementById('qText').innerText = "اختر المختبر المطلوب من الأعلى للبدء"; }
+    }
+
+    function runQuiz(labName) {
+        currentLab = labName; score = 0;
+        const qs = allQuestions.filter(q => q.lab === labName);
+        let qIdx = 0;
+        const showQ = (n) => {
+            clearInterval(timerInterval);
+            if(n >= qs.length) { finish(); return; }
+            timeLeft = 30;
+            updateTimerUI();
+            startTimer(() => showQ(n+1));
+            document.getElementById('qText').innerText = qs[n].question;
+            const optDiv = document.getElementById('optionsContainer');
+            optDiv.innerHTML = "";
+            [qs[n].correct, qs[n].wrong].sort(()=>Math.random()-0.5).forEach(opt => {
+                const b = document.createElement('div');
+                b.className = 'option'; b.innerText = opt;
+                b.onclick = () => {
+                    clearInterval(timerInterval);
+                    if(opt === qs[n].correct) { b.classList.add('correct'); score += 100; }
+                    else { b.classList.add('wrong'); }
+                    setTimeout(()=>showQ(n+1), 700);
+                };
+                optDiv.appendChild(b);
+            });
+        };
+        showQ(0);
+    }
+
+    function startTimer(onTimeout) {
+        timerInterval = setInterval(() => {
+            timeLeft--;
+            updateTimerUI();
+            if (timeLeft <= 0) { clearInterval(timerInterval); onTimeout(); }
+        }, 1000);
+    }
+
+    function updateTimerUI() {
+        document.getElementById('timerText').innerText = timeLeft + "s";
+        document.getElementById('timerBar').style.width = (timeLeft / 30) * 100 + "%";
+        document.getElementById('timerText').style.color = timeLeft < 10 ? 'var(--pink)' : 'var(--blue)';
+    }
+
+    function finish() {
+        clearInterval(timerInterval);
+        document.getElementById('quiz-area').style.display = 'none';
+        document.getElementById('tabs').style.display = 'none';
+        document.getElementById('finalName').innerText = "اسم الطالب: " + studentName;
+        document.getElementById('finalLab').innerText = "المختبر: " + currentLab;
+        document.getElementById('finalScore').innerText = score + " XP";
+        document.getElementById('resForm').src = `${FORM_BASE_URL}?${ENTRY_NAME}=${encodeURIComponent(studentName)}&${ENTRY_SCORE}=${score}`;
+        document.getElementById('result-screen').style.display = 'block';
+    }
+
+    function takeScreenshot() {
+        html2canvas(document.getElementById('photo-card')).then(canvas => {
+            const link = document.createElement('a');
+            link.download = `نتيجة_${studentName}.png`;
+            link.href = canvas.toDataURL();
+            link.click();
+        });
+    }
+
+    function goToWhatsApp() {
+        const msg = `أستاذ ريان، الطالب (${studentName}) حصل على ${score} في (${currentLab})`;
+        window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`);
+    }
+</script>
+</body>
+</html>
