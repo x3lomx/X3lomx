@@ -32,57 +32,50 @@
         @keyframes twinkle { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
 
         .school-header { 
-            text-align: center; padding: 30px 20px;
+            text-align: center; padding: 25px 20px;
             background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(5px);
-            width: 100%; box-sizing: border-box;
+            border-bottom: 1px solid rgba(0, 243, 255, 0.2);
         }
-        .school-header h1 { color: var(--blue); margin: 0; font-size: clamp(1.4rem, 4vw, 2.2rem); text-shadow: 0 0 20px var(--blue); }
+        .school-header h1 { color: var(--blue); margin: 0; font-size: clamp(1.2rem, 4vw, 2rem); text-shadow: 0 0 15px var(--blue); }
         .highlight { color: var(--green); font-weight: bold; }
 
-        .main-wrapper { flex: 1; display: flex; align-items: center; justify-content: center; padding: 15px; width: 100%; box-sizing: border-box; }
-        .app-container { width: 100%; max-width: 750px; }
+        .main-wrapper { flex: 1; display: flex; align-items: center; justify-content: center; padding: 15px; }
+        .app-container { width: 100%; max-width: 700px; }
 
         .card { 
             background: rgba(255,255,255,0.05); backdrop-filter: blur(15px);
-            padding: clamp(15px, 4vw, 35px); border-radius: 25px; 
-            border: 1px solid rgba(0, 243, 255, 0.2); 
-            box-shadow: 0 15px 40px rgba(0,0,0,0.6);
-            text-align: center;
+            padding: 30px; border-radius: 25px; border: 1px solid rgba(0, 243, 255, 0.2); 
+            text-align: center; position: relative;
         }
 
         /* توسيط الصورة */
         .question-img { 
-            max-width: 100%; 
-            max-height: 220px; 
-            border-radius: 12px; 
-            margin: 0 auto 15px auto; 
-            display: block; 
-            border: 2px solid var(--purple); 
+            max-width: 95%; max-height: 230px; border-radius: 12px; 
+            margin: 0 auto 15px auto; display: block; 
+            border: 2px solid var(--purple); box-shadow: 0 0 10px var(--purple);
         }
 
         .btn { 
             background: var(--purple); color: #fff; border: none; 
             padding: 12px 25px; border-radius: 10px; cursor: pointer; 
-            font-weight: bold; transition: 0.3s; font-size: 0.95rem;
+            font-weight: bold; transition: 0.3s; font-size: 1rem;
             display: inline-flex; align-items: center; gap: 8px; justify-content: center;
         }
-        .btn:hover { transform: scale(1.05); box-shadow: 0 0 20px var(--purple); }
-        
-        .btn-outline { background: transparent; border: 1px solid var(--blue); color: var(--blue); }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px var(--purple); }
 
-        input[type="text"] { padding: 15px; width: 85%; max-width: 350px; background: rgba(0,0,0,0.5); color: #fff; border: 1px solid var(--purple); border-radius: 12px; text-align: center; font-size: 1.1rem; margin-bottom: 20px; outline: none; }
+        .btn-send { background: var(--blue) !important; color: #000 !important; width: 100%; padding: 18px; font-size: 1.2rem; margin-top: 10px; }
+        .btn-sent { background: var(--green) !important; cursor: default; }
+
+        input[type="text"] { padding: 15px; width: 80%; background: rgba(0,0,0,0.4); color: #fff; border: 1px solid var(--blue); border-radius: 12px; text-align: center; font-size: 1.1rem; margin-bottom: 20px; outline: none; }
 
         .option { background: rgba(255,255,255,0.08); padding: 15px; margin: 10px 0; border-radius: 12px; cursor: pointer; border: 1px solid transparent; text-align: right; transition: 0.2s; }
-        .option:hover { background: rgba(0, 243, 255, 0.2); border-color: var(--blue); }
+        .option:hover { background: rgba(0, 243, 255, 0.15); border-color: var(--blue); }
         .correct { background: var(--green) !important; color: #000; font-weight: bold; }
         .wrong { background: var(--pink) !important; color: #fff; }
         
-        .timer-container { width: 100%; background: #111; height: 7px; border-radius: 10px; margin: 15px 0; overflow: hidden; }
-        .timer-bar { height: 100%; background: linear-gradient(90deg, var(--purple), var(--blue)); width: 100%; transition: 1s linear; }
+        .timer-bar { height: 6px; background: var(--blue); width: 100%; transition: 1s linear; border-radius: 10px; margin-bottom: 15px; }
 
-        #result-screen, #quiz-area { display: none; }
-        .send-status { background: rgba(57, 255, 20, 0.1); color: var(--green); padding: 15px; border-radius: 15px; margin: 20px 0; border: 1px solid var(--green); }
-        .action-buttons { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 15px; }
+        #result-screen, #quiz-area, #tabs-container { display: none; }
     </style>
 </head>
 <body>
@@ -90,62 +83,52 @@
 <div class="space-bg" id="space"></div>
 
 <div class="school-header">
-    <h1 id="ui-school-name">مدرسة ذات الصواري المتوسطة</h1>
-    <div style="font-size: 0.9rem; margin-top:8px;">
-        <span>المدير: <span class="highlight" id="ui-manager-name">...</span></span> | 
-        <span>المعلم: <span class="highlight" id="ui-teacher-name">...</span></span>
+    <h1 id="ui-school-name">مدرسة ذات الصواري</h1>
+    <div style="font-size: 0.85rem; margin-top:5px;">
+        المدير: <span class="highlight" id="ui-manager-name">...</span> | 
+        المعلم: <span class="highlight" id="ui-teacher-name">...</span>
     </div>
 </div>
 
 <div class="main-wrapper">
     <div class="app-container">
         <div id="login-screen" class="card">
-            <div style="font-size: 3rem; margin-bottom: 10px;">👨‍🚀</div>
-            <h2 style="color: var(--blue); margin-bottom: 25px;">مختبر العلوم الافتراضي</h2>
+            <h2 style="color: var(--blue);">دخول المختبر الافتراضي</h2>
             <input type="text" id="stdName" placeholder="أدخل اسمك الثلاثي">
             <br>
-            <button class="btn" style="border: 2px solid var(--blue); background: transparent; color: var(--blue);" onclick="startApp()">تشغيل المحركات والدخول 🚀</button>
+            <button class="btn" onclick="startApp()">ابدأ المهمة 🚀</button>
         </div>
 
-        <div id="tabs-container" style="display:none; text-align:center;">
-            <h3 style="color: var(--blue); margin-bottom: 15px;">اختر المختبر المطلوب:</h3>
-            <div id="tabs" style="display:flex; flex-wrap:wrap; justify-content:center; gap:10px; margin-bottom:20px;"></div>
+        <div id="tabs-container" class="card">
+            <h3 style="margin-bottom:20px;">اختر المختبر المطلوب</h3>
+            <div id="tabs" style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;"></div>
         </div>
         
         <div id="quiz-area" class="card">
-            <div style="display:flex; justify-content: space-between; font-family: 'Orbitron';">
-                <span id="timerText" style="color: var(--blue); font-size: 1.3rem;">30s</span>
-                <span id="qCounter" style="color: var(--purple);"></span>
+            <div style="display:flex; justify-content: space-between; margin-bottom:10px;">
+                <span id="timerText">30s</span>
+                <span id="qCounter"></span>
             </div>
-            <div class="timer-container"><div id="timerBar" class="timer-bar"></div></div>
+            <div class="timer-bar" id="timerBar"></div>
             
-            <div style="text-align: center; width: 100%;">
-                <img id="qImage" class="question-img" src="" style="display: none;">
-            </div>
-            
-            <h2 id="qText" style="margin: 15px 0; font-size: 1.25rem;">جاري التحميل...</h2>
+            <img id="qImage" class="question-img" src="" style="display: none;">
+            <h2 id="qText">جاري التحميل...</h2>
             <div id="optionsContainer"></div>
-            <br>
-            <button class="btn btn-outline" onclick="backToLabs()">🏠 عودة للمختبرات</button>
         </div>
 
         <div id="result-screen">
-            <div id="photo-card" class="card" style="margin-bottom: 10px; border-color: var(--green);">
-                <h2 style="color: var(--green); margin-top: 0;">🌟 اكتملت المهمة بنجاح 🌟</h2>
-                <h3 id="finalName" style="margin: 5px 0;"></h3>
-                <h4 id="finalLab" style="color: var(--blue); margin: 5px 0;"></h4>
-                <div id="finalScore" style="font-family:'Orbitron'; font-size:3.5rem; color:var(--purple); margin: 8px 0;"></div>
+            <div id="photo-card" class="card">
+                <h2 style="color: var(--green);">🌟 أحسنت يا بطل 🌟</h2>
+                <h3 id="finalName"></h3>
+                <h4 id="finalLab" style="color: var(--blue);"></h4>
+                <div id="finalScore" style="font-family:'Orbitron'; font-size:3rem; margin:15px 0;"></div>
             </div>
 
-            <div class="send-status">
-                <p style="font-weight:bold; margin:0;">✅ تم إرسال نتيجتك تلقائياً إلى المعلم</p>
-            </div>
+            <button id="sendBtn" class="btn btn-send" onclick="sendResult()">📩 ارسالها للمعلم</button>
 
-            <div class="action-buttons">
-                <button class="btn" style="background:var(--blue); color:#000;" onclick="takeScreenshot()">📸 حفظ البطاقة</button>
-                <button class="btn" style="background:#25D366" onclick="goToWhatsApp()">📱 واتساب المعلم</button>
-                <button class="btn" style="background:orange" onclick="retryQuiz()">🔄 إعادة المحاولة</button>
-                <button class="btn btn-outline" onclick="backToLabs()">🏠 مختبر آخر</button>
+            <div style="display:flex; gap:10px; margin-top:15px;">
+                <button class="btn" style="flex:1; background:#25D366" onclick="goToWhatsApp()">واتساب</button>
+                <button class="btn" style="flex:1; background:orange" onclick="location.reload()">الرئيسية</button>
             </div>
         </div>
     </div>
@@ -155,181 +138,154 @@
 
 <script>
     const SHEET_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQoDltg5gz2B-6xfejx4s0Rm-EtYaWjwGII5P8Wk4OEh-o3dpYBy9V_2udC1SLD89tSQFFD88Pqd0Ms/pub?gid=0&single=true&output=csv'; 
-    const FORM_BASE_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSd6qV0wUZIOTA3maN-KuBBhzivjeF0lCYD37-Ecr4FErVu6Xw/formResponse'; 
+    const FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSd6qV0wUZIOTA3maN-KuBBhzivjeF0lCYD37-Ecr4FErVu6Xw/formResponse'; 
     const ENTRY_NAME = 'entry.851707482'; 
     const ENTRY_SCORE = 'entry.1149023992'; 
 
     let allQuestions = [], studentName = "", score = 0, currentLab = "";
-    let timeLeft = 30, timerInterval;
-    let teacherPhone = "966533347331"; // الرقم الافتراضي
+    let timeLeft = 30, timerInterval, teacherPhone = "966533347331";
 
-    // تعريف الأصوات
     const soundCorrect = new Audio('https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3');
     const soundWrong = new Audio('https://assets.mixkit.co/active_storage/sfx/2018/2018-preview.mp3');
 
-    function createSpace() {
+    window.onload = () => {
+        createStars();
+        fetchData();
+    };
+
+    function createStars() {
         const space = document.getElementById('space');
-        for(let i=0; i<80; i++) {
-            const star = document.createElement('div');
-            star.className = 'star';
-            star.style.width = Math.random() * 2 + 'px';
-            star.style.left = Math.random() * 100 + '%';
-            star.style.top = Math.random() * 100 + '%';
-            star.style.setProperty('--duration', Math.random() * 3 + 2 + 's');
-            space.appendChild(star);
+        for(let i=0; i<50; i++) {
+            const s = document.createElement('div');
+            s.className = 'star';
+            s.style.width = s.style.height = Math.random()*2+'px';
+            s.style.left = Math.random()*100+'%'; s.style.top = Math.random()*100+'%';
+            s.style.setProperty('--duration', Math.random()*3+2+'s');
+            space.appendChild(s);
         }
     }
-    createSpace();
 
-    window.onload = fetchQuestions;
-
-    function fetchQuestions() {
+    function fetchData() {
         Papa.parse(SHEET_CSV, { 
             download: true, header: true, 
             complete: (res) => { 
-                const data = res.data;
-                if(data.length > 0) {
-                    document.getElementById('ui-school-name').innerText = data[0]['المدرسة'] || "مدرسة ذات الصواري";
-                    document.getElementById('ui-manager-name').innerText = data[0]['المدير'] || "أ. سهيل عقيلي";
-                    document.getElementById('ui-teacher-name').innerText = data[0]['المعلم'] || "أ. ريان الاسمري";
-                    if(data[0]['رقم الهاتف']) {
-                        let phone = data[0]['رقم الهاتف'].toString().trim();
-                        if(phone.startsWith('05')) phone = '966' + phone.substring(1);
-                        teacherPhone = phone;
-                    }
+                const d = res.data;
+                if(d.length > 0) {
+                    document.getElementById('ui-school-name').innerText = d[0]['المدرسة'] || "مدرسة ذات الصواري";
+                    document.getElementById('ui-manager-name').innerText = d[0]['المدير'] || "أ. سهيل عقيلي";
+                    document.getElementById('ui-teacher-name').innerText = d[0]['المعلم'] || "أ. ريان الاسمري";
+                    if(d[0]['رقم الهاتف']) teacherPhone = d[0]['رقم الهاتف'].toString().includes('966') ? d[0]['رقم الهاتف'] : '966' + d[0]['رقم الهاتف'].slice(-9);
                 }
-
-                allQuestions = data.map(q => ({
-                    lab: q['المختبر'], question: q['السؤال'],
-                    correct: q['الإجابة الصحيحة'], wrong: q['إجابة خاطئة'],
-                    image: q['رابط الصورة']
+                allQuestions = d.filter(q => q['المختبر']).map(q => ({
+                    lab: q['المختبر'], question: q['السؤال'], correct: q['الإجابة الصحيحة'], wrong: q['إجابة خاطئة'], image: q['رابط الصورة']
                 }));
-                renderTabs(); 
+                renderLabs(); 
             } 
         });
     }
 
+    function renderLabs() {
+        const labs = [...new Set(allQuestions.map(q => q.lab))];
+        const div = document.getElementById('tabs');
+        div.innerHTML = "";
+        labs.forEach(l => { div.innerHTML += `<button class="btn" onclick="startQuiz('${l}')">${l}</button>`; });
+    }
+
     function startApp() {
         studentName = document.getElementById('stdName').value;
-        if(!studentName) return alert("فضلاً أدخل الاسم");
+        if(!studentName) return alert("سجل اسمك أولاً");
         document.getElementById('login-screen').style.display = 'none';
         document.getElementById('tabs-container').style.display = 'block';
     }
 
-    function renderTabs() {
-        const labs = [...new Set(allQuestions.filter(q => q.lab).map(q => q.lab))];
-        const div = document.getElementById('tabs');
-        div.innerHTML = "";
-        labs.forEach(lab => { div.innerHTML += `<button class="btn" onclick="runQuiz('${lab}')">${lab}</button>`; });
-    }
-
-    function runQuiz(labName) {
-        currentLab = labName; score = 0;
+    function startQuiz(lab) {
+        currentLab = lab; score = 0;
         document.getElementById('tabs-container').style.display = 'none';
-        document.getElementById('result-screen').style.display = 'none';
         document.getElementById('quiz-area').style.display = 'block';
+        loadQuestion(0);
+    }
+
+    function loadQuestion(idx) {
+        const qs = allQuestions.filter(q => q.lab === currentLab);
+        if(idx >= qs.length) return showResult();
         
-        const qs = allQuestions.filter(q => q.lab === labName);
-        let currentQIndex = 0;
-
-        const showQ = (n) => {
-            clearInterval(timerInterval);
-            if(n >= qs.length) { finish(); return; }
-            currentQIndex = n;
-            document.getElementById('qCounter').innerText = `${n+1} / ${qs.length}`;
-            document.getElementById('qText').innerText = qs[n].question;
-            const imgTag = document.getElementById('qImage');
-            
-            if(qs[n].image && qs[n].image.trim() !== "") {
-                imgTag.src = qs[n].image.trim(); 
-                imgTag.style.display = "block";
-            } else {
-                imgTag.style.display = "none";
-            }
-            
-            timeLeft = 30; updateTimerUI();
-            startTimer(() => showQ(n+1));
-
-            const optDiv = document.getElementById('optionsContainer');
-            optDiv.innerHTML = "";
-            [qs[n].correct, qs[n].wrong].sort(()=>Math.random()-0.5).forEach(opt => {
-                const b = document.createElement('div');
-                b.className = 'option'; b.innerText = opt;
-                b.onclick = () => {
-                    clearInterval(timerInterval);
-                    if(opt === qs[n].correct) { 
-                        b.classList.add('correct'); score += 1; 
-                        soundCorrect.play(); // تشغيل صوت الإجابة الصحيحة
-                    } else { 
-                        b.classList.add('wrong'); 
-                        soundWrong.play(); // تشغيل صوت الإجابة الخاطئة
-                    }
-                    setTimeout(()=>showQ(n+1), 800);
-                };
-                optDiv.appendChild(b);
-            });
-        };
-        showQ(0);
-    }
-
-    function startTimer(onTimeout) {
+        document.getElementById('qCounter').innerText = `${idx+1} / ${qs.length}`;
+        const q = qs[idx];
+        document.getElementById('qText').innerText = q.question;
+        
+        const img = document.getElementById('qImage');
+        if(q.image) { img.src = q.image; img.style.display = "block"; } else { img.style.display = "none"; }
+        
+        timeLeft = 30;
+        updateTimer();
+        clearInterval(timerInterval);
         timerInterval = setInterval(() => {
-            timeLeft--; updateTimerUI();
-            if (timeLeft <= 0) { clearInterval(timerInterval); onTimeout(); }
+            timeLeft--; updateTimer();
+            if(timeLeft <= 0) { clearInterval(timerInterval); loadQuestion(idx+1); }
         }, 1000);
-    }
 
-    function updateTimerUI() {
-        document.getElementById('timerText').innerText = timeLeft + "s";
-        document.getElementById('timerBar').style.width = (timeLeft / 30) * 100 + "%";
-    }
-
-    function finish() {
-        document.getElementById('quiz-area').style.display = 'none';
-        document.getElementById('finalName').innerText = studentName;
-        document.getElementById('finalLab').innerText = "مختبر: " + currentLab;
-        document.getElementById('finalScore').innerText = score + " XP";
-
-        const autoForm = document.createElement('form');
-        autoForm.method = 'POST';
-        autoForm.action = FORM_BASE_URL;
-        autoForm.target = 'hidden_iframe';
-
-        const nInput = document.createElement('input'); nInput.name = ENTRY_NAME; nInput.value = studentName;
-        autoForm.appendChild(nInput);
-        const sInput = document.createElement('input'); sInput.name = ENTRY_SCORE; sInput.value = score + " في " + currentLab;
-        autoForm.appendChild(sInput);
-
-        document.body.appendChild(autoForm);
-        autoForm.submit();
-        document.body.removeChild(autoForm);
-
-        document.getElementById('result-screen').style.display = 'block';
-    }
-
-    function takeScreenshot() {
-        html2canvas(document.getElementById('photo-card')).then(canvas => {
-            const link = document.createElement('a');
-            link.download = `نتيجة_${studentName}.png`;
-            link.href = canvas.toDataURL();
-            link.click();
+        const opts = [q.correct, q.wrong].sort(() => Math.random() - 0.5);
+        const container = document.getElementById('optionsContainer');
+        container.innerHTML = "";
+        opts.forEach(o => {
+            const div = document.createElement('div');
+            div.className = 'option'; div.innerText = o;
+            div.onclick = () => {
+                clearInterval(timerInterval);
+                if(o === q.correct) { div.classList.add('correct'); score++; soundCorrect.play(); } 
+                else { div.classList.add('wrong'); soundWrong.play(); }
+                setTimeout(() => loadQuestion(idx+1), 800);
+            };
+            container.appendChild(div);
         });
     }
 
+    function updateTimer() {
+        document.getElementById('timerText').innerText = timeLeft + "s";
+        document.getElementById('timerBar').style.width = (timeLeft/30)*100 + "%";
+    }
+
+    function showResult() {
+        document.getElementById('quiz-area').style.display = 'none';
+        document.getElementById('result-screen').style.display = 'block';
+        document.getElementById('finalName').innerText = studentName;
+        document.getElementById('finalLab').innerText = "مختبر: " + currentLab;
+        document.getElementById('finalScore').innerText = score + " XP";
+    }
+
+    function sendResult() {
+        const btn = document.getElementById('sendBtn');
+        btn.innerText = "⏳ جاري الإرسال...";
+        
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = FORM_URL;
+        form.target = 'hidden_iframe';
+
+        const nInp = document.createElement('input'); nInp.name = ENTRY_NAME; nInp.value = studentName;
+        const sInp = document.createElement('input'); sInp.name = ENTRY_SCORE; sInp.value = score + " في " + currentLab;
+        
+        form.appendChild(nInp); form.appendChild(sInp);
+        document.body.appendChild(form);
+        form.submit();
+        
+        setTimeout(() => {
+            btn.innerText = "✅ تم الإرسال للمعلم";
+            btn.classList.add('btn-sent');
+            btn.onclick = null;
+            document.body.removeChild(form);
+        }, 1500);
+    }
+
     function goToWhatsApp() {
-        const teacherName = document.getElementById('ui-teacher-name').innerText;
-        const msg = `أستاذ ${teacherName}، الطالب (${studentName}) حقق درجة ${score} في مختبر (${currentLab})`;
+        const msg = `الأستاذ الكريم، الطالب (${studentName}) حقق ${score} في تجربة (${currentLab})`;
         window.open(`https://wa.me/${teacherPhone}?text=${encodeURIComponent(msg)}`);
     }
 
-    function backToLabs() {
-        clearInterval(timerInterval);
-        document.getElementById('quiz-area').style.display = 'none';
-        document.getElementById('result-screen').style.display = 'none';
-        document.getElementById('tabs-container').style.display = 'block';
+    function updateTimer() {
+        document.getElementById('timerText').innerText = timeLeft + "s";
+        document.getElementById('timerBar').style.width = (timeLeft/30)*100 + "%";
     }
-
-    function retryQuiz() { runQuiz(currentLab); }
 </script>
 </body>
 </html>
