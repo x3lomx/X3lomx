@@ -14,122 +14,115 @@
         
         body, html { height: 100%; margin: 0; padding: 0; background: var(--bg); color: #fff; font-family: 'Cairo', sans-serif; overflow-x: hidden; display: flex; flex-direction: column; }
         
-        /* خلفية الفضاء المتحركة */
-        .space-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: radial-gradient(circle at center, #1b2735 0%, #090a0f 100%); overflow: hidden; }
+        /* الفضاء والنجوم */
+        .space-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: radial-gradient(circle at center, #1b2735 0%, #05070a 100%); }
         .star { position: absolute; background: white; border-radius: 50%; opacity: 0.5; animation: twinkle var(--duration) infinite; }
         @keyframes twinkle { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
 
-        /* الرجل الفضائي العائم */
-        .astronaut {
-            position: absolute; width: 120px; top: 15%; left: 10%;
-            animation: float 6s ease-in-out infinite; z-index: 1;
-            filter: drop-shadow(0 0 15px var(--blue));
+        /* تأثير الأبخرة الكيميائية */
+        .steam { position: fixed; bottom: -50px; background: rgba(255, 255, 255, 0.1); border-radius: 50%; filter: blur(20px); animation: rise 8s infinite ease-in; z-index: -1; }
+        @keyframes rise { 0% { transform: translateY(0) scale(1); opacity: 0; } 50% { opacity: 0.3; } 100% { transform: translateY(-100vh) scale(3); opacity: 0; } }
+
+        /* الرجل الفضائي البرمجي (ضمان الظهور) */
+        .astro-css { position: absolute; width: 60px; height: 80px; top: 20%; right: 10%; animation: floatAstro 6s infinite ease-in-out; z-index: 2; }
+        .astro-head { width: 30px; height: 30px; background: #fff; border-radius: 50%; position: relative; border: 2px solid #ddd; }
+        .astro-visor { width: 20px; height: 10px; background: #333; border-radius: 4px; position: absolute; top: 8px; left: 5px; box-shadow: 0 0 10px var(--blue); }
+        .astro-body { width: 40px; height: 45px; background: #eee; border-radius: 8px; margin-top: -5px; border: 2px solid #ddd; }
+        @keyframes floatAstro { 0%, 100% { transform: translateY(0) rotate(5deg); } 50% { transform: translateY(-30px) rotate(-10deg); } }
+
+        /* عنوان SCIENCE LAB المضيء */
+        .glowing-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3.5rem;
+            color: #fff;
+            text-shadow: 0 0 10px var(--blue), 0 0 20px var(--blue), 0 0 40px var(--blue);
+            animation: glowPulse 2s infinite alternate;
+            margin: 20px 0;
         }
-        @keyframes float { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-30px) rotate(10deg); } }
+        @keyframes glowPulse { from { opacity: 0.8; transform: scale(1); } to { opacity: 1; transform: scale(1.05); text-shadow: 0 0 20px var(--purple), 0 0 40px var(--purple); } }
 
-        /* الكواكب المتحركة */
-        .planet { position: absolute; border-radius: 50%; top: 50%; left: 50%; transform-origin: -100px; animation: orbit linear infinite; }
-        .mercury { width: 10px; height: 10px; background: #A5A5A5; margin-left: -150px; --dist: 150px; animation-duration: 4s; }
-        .venus { width: 18px; height: 18px; background: #E3BB76; margin-left: -200px; --dist: 200px; animation-duration: 7s; }
-        .earth { width: 22px; height: 22px; background: #2271B3; margin-left: -260px; --dist: 260px; animation-duration: 10s; box-shadow: 0 0 10px #2271B3; }
-        .mars { width: 14px; height: 14px; background: #E27B58; margin-left: -320px; --dist: 320px; animation-duration: 13s; }
+        /* الكواكب */
+        .orbit { position: absolute; border: 1px solid rgba(255,255,255,0.05); border-radius: 50%; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+        .planet { position: absolute; border-radius: 50%; top: -10px; left: 50%; }
+        .earth-orbit { width: 400px; height: 400px; animation: spin 20s linear infinite; }
+        .earth-css { width: 25px; height: 25px; background: #2271B3; box-shadow: 0 0 15px var(--blue); }
+        @keyframes spin { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg); } }
 
-        @keyframes orbit {
-            from { transform: rotate(0deg) translateX(var(--dist)) rotate(0deg); }
-            to { transform: rotate(360deg) translateX(var(--dist)) rotate(-360deg); }
-        }
+        .school-header { text-align: center; padding: 15px; background: rgba(0,0,0,0.7); backdrop-filter: blur(10px); border-bottom: 2px solid var(--blue); z-index: 10; }
+        .main-wrapper { flex: 1; display: flex; align-items: center; justify-content: center; z-index: 5; padding: 20px; }
+        
+        .card { background: rgba(0,0,0,0.6); backdrop-filter: blur(20px); padding: 30px; border-radius: 30px; border: 1px solid var(--blue); text-align: center; box-shadow: 0 0 40px rgba(0, 243, 255, 0.2); max-width: 500px; width: 100%; }
 
-        .school-header { text-align: center; padding: 20px; background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(10px); border-bottom: 1px solid var(--blue); z-index: 10; }
-        .school-header h1 { color: var(--blue); margin: 0; font-size: 1.8rem; text-shadow: 0 0 15px var(--blue); }
+        .btn { background: var(--purple); color: #fff; border: none; padding: 12px 30px; border-radius: 12px; cursor: pointer; font-weight: bold; transition: 0.3s; font-size: 1.1rem; }
+        .btn:hover { background: var(--blue); color: #000; transform: translateY(-3px); box-shadow: 0 5px 15px var(--blue); }
 
-        .main-wrapper { flex: 1; display: flex; align-items: center; justify-content: center; padding: 15px; z-index: 5; }
-        .app-container { width: 100%; max-width: 650px; position: relative; }
-
-        .card { background: rgba(255,255,255,0.07); backdrop-filter: blur(15px); padding: 30px; border-radius: 25px; border: 1px solid rgba(0, 243, 255, 0.3); text-align: center; box-shadow: 0 0 30px rgba(0,0,0,0.5); }
-
-        /* توسيط الصور */
-        .question-img { max-width: 90%; max-height: 220px; border-radius: 15px; margin: 15px auto; display: block; border: 3px solid var(--purple); box-shadow: 0 0 15px var(--purple); }
-
-        .btn { background: var(--purple); color: #fff; border: none; padding: 12px 25px; border-radius: 12px; cursor: pointer; font-weight: bold; transition: 0.3s; font-size: 1rem; }
-        .btn:hover { transform: scale(1.05); box-shadow: 0 0 20px var(--purple); }
-        .btn-send { background: var(--green) !important; color: #000 !important; width: 100%; font-size: 1.2rem; padding: 18px; margin-top: 15px; }
-
-        input[type="text"] { padding: 15px; width: 85%; background: rgba(0,0,0,0.6); color: #fff; border: 2px solid var(--blue); border-radius: 15px; text-align: center; font-size: 1.2rem; margin-bottom: 20px; outline: none; }
-
-        .option { background: rgba(255,255,255,0.1); padding: 15px; margin: 10px 0; border-radius: 12px; cursor: pointer; text-align: right; border: 1px solid transparent; transition: 0.3s; }
+        .option { background: rgba(255,255,255,0.1); padding: 15px; margin: 10px 0; border-radius: 15px; cursor: pointer; text-align: right; border: 1px solid transparent; transition: 0.2s; }
         .option:hover { background: rgba(0, 243, 255, 0.2); border-color: var(--blue); }
         .correct { background: var(--green) !important; color: #000; font-weight: bold; }
         .wrong { background: var(--pink) !important; color: #fff; }
 
-        #result-screen, #quiz-area, #tabs-container { display: none; }
-        .report-item { border-bottom: 1px solid #444; padding: 10px 0; color: #333; }
+        input[type="text"] { width: 90%; padding: 15px; border-radius: 15px; border: 2px solid var(--blue); background: #000; color: #fff; text-align: center; font-size: 1.2rem; margin-bottom: 20px; }
+        #quiz-area, #tabs-container, #result-screen { display: none; }
+        .question-img { max-width: 100%; border-radius: 15px; border: 2px solid var(--purple); margin: 10px 0; }
     </style>
 </head>
 <body>
 
 <div class="space-bg" id="space">
-    <div class="astronaut">👨‍🚀</div>
-    <div class="planet mercury"></div>
-    <div class="planet venus"></div>
-    <div class="planet earth"></div>
-    <div class="planet mars"></div>
+    <div class="astro-css">
+        <div class="astro-head"><div class="astro-visor"></div></div>
+        <div class="astro-body"></div>
+    </div>
+    <div class="orbit earth-orbit"><div class="planet earth-css"></div></div>
 </div>
 
 <div class="school-header">
-    <h1 id="ui-school-name">مدرسة ذات الصواري المتوسطة</h1>
-    <div style="font-size: 0.9rem; margin-top:5px;">
-        المدير: <span id="ui-manager-name" style="color:var(--green)">...</span> | 
-        المعلم: <span id="ui-teacher-name" style="color:var(--green)">...</span>
-    </div>
+    <h2 id="ui-school-name" style="margin:0; color:var(--blue);">مدرسة ذات الصواري</h2>
+    <p style="margin:5px 0; font-size:0.8rem;">المعلم: <span id="ui-teacher-name" style="color:var(--green)">...</span></p>
 </div>
 
 <div class="main-wrapper">
-    <div class="app-container">
+    <div id="login-screen" class="card">
+        <div class="glowing-title">SCIENCE LAB</div>
+        <p style="color: #ccc;">أهلاً بك في عالم التفاعلات والاكتشافات</p>
+        <input type="text" id="stdName" placeholder="أدخل اسمك يا بطل">
+        <br>
+        <button class="btn" onclick="startApp()">دخول المختبر 🧪</button>
+    </div>
+
+    <div id="tabs-container" class="card">
+        <h3 style="color: var(--blue);">اختر المختبر الذي تريد استكشافه:</h3>
+        <div id="tabs" style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;"></div>
+    </div>
+
+    <div id="quiz-area" class="card">
+        <div style="display:flex; justify-content: space-between; font-family: 'Orbitron';">
+            <span id="timerText" style="color:var(--pink)">30s</span>
+            <span id="qCounter"></span>
+        </div>
+        <img id="qImage" class="question-img" style="display:none;">
+        <h2 id="qText" style="font-size: 1.2rem; margin:15px 0;"></h2>
+        <div id="optionsContainer"></div>
+    </div>
+
+    <div id="result-screen" style="width:100%; max-width:600px;">
+        <div id="photo-card" class="card" style="border-color: var(--green); max-width:none;">
+            <h2 style="color: var(--green);">🎉 أحسنت يا مستكشف 🎉</h2>
+            <h3 id="finalName"></h3>
+            <h4 id="finalLab" style="color: var(--blue);"></h4>
+            <div id="finalScore" style="font-family:'Orbitron'; font-size:3rem; color:var(--purple); margin:10px 0;"></div>
+            
+            <div id="questions-report" style="display:none; background:#fff; color:#000; padding:15px; border-radius:15px; text-align:right;">
+                <h4 style="text-align:center; border-bottom:1px solid #333;">تقرير المهمة</h4>
+                <div id="report-list"></div>
+            </div>
+        </div>
         
-        <div id="login-screen" class="card">
-            <h1 style="color: var(--blue); font-family: 'Orbitron';">SCIENCE LAB</h1>
-            <p>أهلاً بك في مختبر العلوم الرقمي</p>
-            <input type="text" id="stdName" placeholder="أدخل اسمك الثلاثي">
-            <br>
-            <button class="btn" onclick="startApp()">انطلاق الرحلة 🚀</button>
-        </div>
-
-        <div id="tabs-container" class="card">
-            <h3 style="color: var(--blue);">اختر وجهتك العلمية:</h3>
-            <div id="tabs" style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;"></div>
-        </div>
-        
-        <div id="quiz-area" class="card">
-            <div style="display:flex; justify-content: space-between; font-family: 'Orbitron'; font-size: 1.2rem;">
-                <span id="timerText" style="color:var(--blue)">30s</span>
-                <span id="qCounter" style="color:var(--purple)"></span>
-            </div>
-            <img id="qImage" class="question-img" src="" style="display: none;">
-            <h2 id="qText" style="margin:20px 0;"></h2>
-            <div id="optionsContainer"></div>
-        </div>
-
-        <div id="result-screen">
-            <div id="photo-card" class="card" style="border-color: var(--green);">
-                <h2 style="color: var(--green);">🌟 اكتملت المهمة بنجاح 🌟</h2>
-                <h3 id="finalName"></h3>
-                <h4 id="finalLab" style="color: var(--blue);"></h4>
-                <div id="finalScore" style="font-family:'Orbitron'; font-size:3rem; color:var(--purple);"></div>
-                
-                <div id="questions-report" style="display:none; background:#fff; color:#000; padding:15px; border-radius:10px; text-align:right; margin-top:10px;">
-                    <h4 style="text-align:center;">تقرير الأداء</h4>
-                    <div id="report-list"></div>
-                </div>
-            </div>
-
-            <button id="sendBtn" class="btn btn-send" onclick="sendResult()">📩 ارسالها للمعلم</button>
-
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:15px;">
-                <button class="btn" style="background:#25D366" onclick="goToWhatsApp()">📱 واتساب</button>
-                <button class="btn" style="background:orange" onclick="saveFullReport()">📸 حفظ التقرير</button>
-                <button id="retryBtn" class="btn" style="background:transparent; border:1px solid #fff;" onclick="retryQuiz()">🔄 إعادة</button>
-                <button class="btn" style="background:transparent; border:1px solid var(--blue); color:var(--blue);" onclick="backToLabs()">🏠 المختبرات</button>
-            </div>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:20px;">
+            <button class="btn" style="background:var(--green); color:#000;" onclick="sendResult()">📩 إرسال النتيجة</button>
+            <button class="btn" style="background:orange" onclick="saveFullReport()">📸 حفظ التقرير</button>
+            <button id="retryBtn" class="btn" style="background:none; border:1px solid #fff;" onclick="retryQuiz()">🔄 إعادة</button>
+            <button class="btn" style="background:none; border:1px solid var(--blue); color:var(--blue);" onclick="backToLabs()">🏠 المختبرات</button>
         </div>
     </div>
 </div>
@@ -137,58 +130,56 @@
 <iframe name="hidden_iframe" style="display:none;"></iframe>
 
 <script>
-    const SHEET_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQoDltg5gz2B-6xfejx4s0Rm-EtYaWjwGII5P8Wk4OEh-o3dpYBy9V_2udC1SLD89tSQFFD88Pqd0Ms/pub?gid=0&single=true&output=csv'; 
-    const FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSd6qV0wUZIOTA3maN-KuBBhzivjeF0lCYD37-Ecr4FErVu6Xw/formResponse'; 
-    const ENTRY_NAME = 'entry.851707482'; 
-    const ENTRY_SCORE = 'entry.1149023992'; 
+    const SHEET_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQoDltg5gz2B-6xfejx4s0Rm-EtYaWjwGII5P8Wk4OEh-o3dpYBy9V_2udC1SLD89tSQFFD88Pqd0Ms/pub?gid=0&single=true&output=csv';
+    const FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSd6qV0wUZIOTA3maN-KuBBhzivjeF0lCYD37-Ecr4FErVu6Xw/formResponse';
+    const ENTRY_NAME = 'entry.851707482', ENTRY_SCORE = 'entry.1149023992';
 
     let allQuestions = [], studentName = "", score = 0, currentLab = "";
-    let timeLeft = 30, timerInterval, teacherPhone = "966533347331";
-    let studentAnswers = [], labSettings = {};
+    let timeLeft = 30, timerInterval, labSettings = {}, studentAnswers = [];
 
-    const soundCorrect = new Audio('https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3');
-    const soundWrong = new Audio('https://assets.mixkit.co/active_storage/sfx/2018/2018-preview.mp3');
-
-    window.onload = () => { createStars(); fetchData(); };
-
-    function createStars() {
+    window.onload = () => {
+        // إنشاء النجوم والأبخرة
         const space = document.getElementById('space');
-        for(let i=0; i<60; i++) {
-            const s = document.createElement('div');
-            s.className = 'star';
+        for(let i=0; i<50; i++) {
+            const s = document.createElement('div'); s.className = 'star';
             s.style.width = s.style.height = Math.random()*2+'px';
             s.style.left = Math.random()*100+'%'; s.style.top = Math.random()*100+'%';
             s.style.setProperty('--duration', Math.random()*3+2+'s');
             space.appendChild(s);
         }
-    }
+        for(let i=0; i<8; i++) {
+            const st = document.createElement('div'); st.className = 'steam';
+            st.style.width = st.style.height = Math.random()*100+50+'px';
+            st.style.left = Math.random()*100+'%'; st.style.animationDelay = Math.random()*5+'s';
+            space.appendChild(st);
+        }
+        fetchData();
+    };
 
     function fetchData() {
-        Papa.parse(SHEET_CSV, { download: true, header: true, complete: (res) => { 
+        Papa.parse(SHEET_CSV, { download: true, header: true, complete: (res) => {
             const d = res.data;
             if(d.length > 0) {
                 document.getElementById('ui-school-name').innerText = d[0]['المدرسة'] || "مدرسة ذات الصواري";
-                document.getElementById('ui-manager-name').innerText = d[0]['المدير'] || "أ. سهيل عقيلي";
                 document.getElementById('ui-teacher-name').innerText = d[0]['المعلم'] || "أ. ريان الاسمري";
-                if(d[0]['رقم الهاتف']) teacherPhone = d[0]['رقم الهاتف'].toString().includes('966') ? d[0]['رقم الهاتف'] : '966' + d[0]['رقم الهاتف'].slice(-9);
             }
             allQuestions = d.filter(q => q['المختبر']).map(q => {
                 labSettings[q['المختبر']] = (q['إعادة'] === "نعم");
                 return { lab: q['المختبر'], question: q['السؤال'], correct: q['الإجابة الصحيحة'], wrong: q['إجابة خاطئة'], image: q['رابط الصورة'] };
             });
-            renderLabs(); 
+            renderLabs();
         }});
     }
 
     function renderLabs() {
         const labs = [...new Set(allQuestions.map(q => q.lab))];
         const div = document.getElementById('tabs'); div.innerHTML = "";
-        labs.forEach(l => { div.innerHTML += `<button class="btn" style="background:rgba(255,255,255,0.1); border:1px solid var(--blue);" onclick="startQuiz('${l}')">${l}</button>`; });
+        labs.forEach(l => { div.innerHTML += `<button class="btn" style="background:rgba(255,255,255,0.05); border:1px solid var(--blue);" onclick="startQuiz('${l}')">${l}</button>`; });
     }
 
     function startApp() {
         studentName = document.getElementById('stdName').value;
-        if(!studentName) return alert("الرجاء كتابة اسمك يا بطل");
+        if(!studentName) return alert("سجل اسمك أولاً!");
         document.getElementById('login-screen').style.display = 'none';
         document.getElementById('tabs-container').style.display = 'block';
     }
@@ -218,9 +209,9 @@
             const div = document.createElement('div'); div.className = 'option'; div.innerText = o;
             div.onclick = () => {
                 clearInterval(timerInterval);
-                const ok = (o === q.correct);
-                if(ok) { div.classList.add('correct'); score++; soundCorrect.play(); } else { div.classList.add('wrong'); soundWrong.play(); }
-                studentAnswers.push({q: q.question, a: o, c: ok});
+                const isOk = (o === q.correct);
+                if(isOk) { div.classList.add('correct'); score++; } else { div.classList.add('wrong'); }
+                studentAnswers.push({q: q.question, a: o, c: isOk});
                 setTimeout(() => loadQuestion(idx+1), 600);
             };
             container.appendChild(div);
@@ -233,29 +224,27 @@
         document.getElementById('quiz-area').style.display = 'none';
         document.getElementById('result-screen').style.display = 'block';
         document.getElementById('finalName').innerText = studentName;
-        document.getElementById('finalLab').innerText = "مختبر: " + currentLab;
+        document.getElementById('finalLab').innerText = "مهمة: " + currentLab;
         document.getElementById('finalScore').innerText = score + " XP";
-        
         document.getElementById('retryBtn').style.display = labSettings[currentLab] ? "inline-flex" : "none";
 
         const list = document.getElementById('report-list'); list.innerHTML = "";
         studentAnswers.forEach((ans, i) => {
-            list.innerHTML += `<div class="report-item"><b>س${i+1}: ${ans.q}</b><br>إجابتك: <span style="color:${ans.c?'green':'red'}">${ans.a}</span></div>`;
+            list.innerHTML += `<div style="border-bottom:1px solid #ddd; padding:10px;"><b>س${i+1}: ${ans.q}</b><br>إجابتك: ${ans.a} ${ans.c?'✅':'❌'}</div>`;
         });
     }
 
     function sendResult() {
-        const btn = document.getElementById('sendBtn'); btn.innerText = "⏳ جاري الإرسال...";
         const f = document.createElement('form'); f.method = 'POST'; f.action = FORM_URL; f.target = 'hidden_iframe';
         const n = document.createElement('input'); n.name = ENTRY_NAME; n.value = studentName;
         const s = document.createElement('input'); s.name = ENTRY_SCORE; s.value = score + " في " + currentLab;
         f.appendChild(n); f.appendChild(s); document.body.appendChild(f); f.submit();
-        setTimeout(() => { btn.innerText = "✅ تم الإرسال بنجاح"; btn.style.background="gray"; }, 1500);
+        alert("تم إرسال نتيجتك للمعلم بنجاح!");
     }
 
     function saveFullReport() {
         const r = document.getElementById('questions-report'); r.style.display = "block";
-        html2canvas(document.getElementById('photo-card')).then(canvas => {
+        html2canvas(document.getElementById('photo-card'), {backgroundColor:'#05070a'}).then(canvas => {
             const link = document.createElement('a'); link.download = `تقرير_${studentName}.png`;
             link.href = canvas.toDataURL(); link.click(); r.style.display = "none";
         });
@@ -263,7 +252,6 @@
 
     function backToLabs() { document.getElementById('result-screen').style.display = 'none'; document.getElementById('tabs-container').style.display = 'block'; }
     function retryQuiz() { startQuiz(currentLab); }
-    function goToWhatsApp() { window.open(`https://wa.me/${teacherPhone}?text=${encodeURIComponent('أستاذي، حصلت على '+score+' في '+currentLab)}`); }
 </script>
 </body>
 </html>
