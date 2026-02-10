@@ -314,7 +314,7 @@
         document.getElementById('quiz-area').style.display = 'none';
         document.getElementById('finalName').innerText = studentName;
         document.getElementById('finalLab').innerText = "مختبر: " + currentLab;
-        document.getElementById('finalScore').innerText = score + " نقطة";
+        document.getElementById('finalScore').innerText = score + " XP";
         document.getElementById('resForm').src = `${FORM_BASE_URL}?${ENTRY_NAME}=${encodeURIComponent(studentName)}&${ENTRY_SCORE}=${score}`;
         document.getElementById('result-screen').style.display = 'block';
     }
@@ -336,3 +336,4 @@
 </body>
 
 </html>
+
