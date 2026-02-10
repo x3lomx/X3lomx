@@ -32,8 +32,7 @@
         @keyframes twinkle { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
 
         #login-screen {
-            position: relative;
-            overflow: hidden;
+            position: relative; overflow: hidden;
             border: 2px solid var(--blue);
             box-shadow: 0 0 20px rgba(0, 243, 255, 0.3), inset 0 0 15px rgba(0, 243, 255, 0.2);
             animation: borderGlow 4s infinite alternate;
@@ -45,12 +44,9 @@
         }
 
         .cyber-btn {
-            position: relative;
-            background: transparent !important;
-            border: 2px solid var(--blue) !important;
-            color: var(--blue) !important;
-            overflow: hidden;
-            z-index: 1;
+            position: relative; background: transparent !important;
+            border: 2px solid var(--blue) !important; color: var(--blue) !important;
+            overflow: hidden; z-index: 1;
         }
         .cyber-btn:hover { background: var(--blue) !important; color: #000 !important; box-shadow: 0 0 40px var(--blue); }
 
@@ -73,7 +69,15 @@
             text-align: center;
         }
 
-        .question-img { max-width: 100%; max-height: 220px; border-radius: 12px; margin-bottom: 15px; border: 2px solid var(--purple); display: none; }
+        /* تعديل توسيط الصورة */
+        .question-img { 
+            max-width: 100%; 
+            max-height: 220px; 
+            border-radius: 12px; 
+            margin: 0 auto 15px auto; /* التوسيط باستخدام margin auto */
+            display: block; /* جعلها كتلة لتطبيق التوسيط */
+            border: 2px solid var(--purple); 
+        }
 
         .btn { 
             background: var(--purple); color: #fff; border: none; 
@@ -97,7 +101,6 @@
 
         #result-screen, #quiz-area { display: none; }
         
-        /* تحسين منطقة حالة الإرسال */
         .send-status { background: rgba(57, 255, 20, 0.1); color: var(--green); padding: 15px; border-radius: 15px; margin: 20px 0; border: 1px solid var(--green); }
 
         .action-buttons { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 15px; }
@@ -108,10 +111,10 @@
 <div class="space-bg" id="space"></div>
 
 <div class="school-header">
-    <h1>مدرسة ذات الصواري المتوسطة</h1>
+    <h1 id="ui-school-name">جاري تحميل اسم المدرسة...</h1>
     <div style="font-size: 0.9rem; margin-top:8px;">
-        <span>المدير: <span class="highlight">أ. سهيل عقيلي</span></span> | 
-        <span>المعلم: <span class="highlight">أ. ريان الاسمري</span></span>
+        <span>المدير: <span class="highlight" id="ui-manager-name">...</span></span> | 
+        <span>المعلم: <span class="highlight" id="ui-teacher-name">...</span></span>
     </div>
 </div>
 
@@ -137,7 +140,10 @@
             </div>
             <div class="timer-container"><div id="timerBar" class="timer-bar"></div></div>
             
-            <img id="qImage" class="question-img" src="">
+            <div style="text-align: center; width: 100%;">
+                <img id="qImage" class="question-img" src="" style="display: none;">
+            </div>
+            
             <h2 id="qText" style="margin: 15px 0; font-size: 1.25rem;">جاري التحميل...</h2>
             <div id="optionsContainer"></div>
             <br>
@@ -177,9 +183,7 @@
 
     let allQuestions = [], studentName = "", score = 0, currentLab = "";
     let timeLeft = 30, timerInterval;
-
-    const soundCorrect = new Audio('https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3');
-    const soundWrong = new Audio('https://assets.mixkit.co/active_storage/sfx/2018/2018-preview.mp3');
+    let teacherPhone = ""; // سيتم سحبه من الجدول مستقبلاً إذا رغبت
 
     function createSpace() {
         const space = document.getElementById('space');
@@ -196,19 +200,22 @@
     }
     createSpace();
 
-    function startApp() {
-        studentName = document.getElementById('stdName').value;
-        if(!studentName) return alert("فضلاً أدخل الاسم");
-        document.getElementById('login-screen').style.display = 'none';
-        document.getElementById('tabs-container').style.display = 'block';
-        fetchQuestions();
-    }
+    // جلب البيانات عند فتح الصفحة
+    window.onload = fetchQuestions;
 
     function fetchQuestions() {
         Papa.parse(SHEET_CSV, { 
             download: true, header: true, 
             complete: (res) => { 
-                allQuestions = res.data.map(q => ({
+                const data = res.data;
+                // تحديث بيانات المدرسة من أول صف متوفر
+                if(data.length > 0) {
+                    document.getElementById('ui-school-name').innerText = data[0]['المدرسة'] || "مدرسة ذات الصواري";
+                    document.getElementById('ui-manager-name').innerText = data[0]['المدير'] || "أ. سهيل عقيلي";
+                    document.getElementById('ui-teacher-name').innerText = data[0]['المعلم'] || "أ. ريان الاسمري";
+                }
+
+                allQuestions = data.map(q => ({
                     lab: q['المختبر'], question: q['السؤال'],
                     correct: q['الإجابة الصحيحة'], wrong: q['إجابة خاطئة'],
                     image: q['رابط الصورة']
@@ -218,11 +225,18 @@
         });
     }
 
+    function startApp() {
+        studentName = document.getElementById('stdName').value;
+        if(!studentName) return alert("فضلاً أدخل الاسم");
+        document.getElementById('login-screen').style.display = 'none';
+        document.getElementById('tabs-container').style.display = 'block';
+    }
+
     function renderTabs() {
-        const labs = [...new Set(allQuestions.map(q => q.lab))];
+        const labs = [...new Set(allQuestions.filter(q => q.lab).map(q => q.lab))];
         const div = document.getElementById('tabs');
         div.innerHTML = "";
-        labs.forEach(lab => { if(lab) div.innerHTML += `<button class="btn" onclick="runQuiz('${lab}')">${lab}</button>`; });
+        labs.forEach(lab => { div.innerHTML += `<button class="btn" onclick="runQuiz('${lab}')">${lab}</button>`; });
     }
 
     function runQuiz(labName) {
@@ -242,7 +256,6 @@
             document.getElementById('qText').innerText = qs[n].question;
             const imgTag = document.getElementById('qImage');
             
-            // تحسين معالجة رابط الصورة
             if(qs[n].image && qs[n].image.trim() !== "") {
                 let finalImg = qs[n].image.trim();
                 if(finalImg.includes('ibb.co') && !finalImg.includes('i.ibb.co')) {
@@ -264,8 +277,8 @@
                 b.className = 'option'; b.innerText = opt;
                 b.onclick = () => {
                     clearInterval(timerInterval);
-                    if(opt === qs[n].correct) { b.classList.add('correct'); score += 1; soundCorrect.play(); } 
-                    else { b.classList.add('wrong'); soundWrong.play(); }
+                    if(opt === qs[n].correct) { b.classList.add('correct'); score += 1; } 
+                    else { b.classList.add('wrong'); }
                     setTimeout(()=>showQ(n+1), 800);
                 };
                 optDiv.appendChild(b);
@@ -301,7 +314,6 @@
         document.getElementById('finalLab').innerText = "مختبر: " + currentLab;
         document.getElementById('finalScore').innerText = score + " XP";
 
-        // --- عملية الإرسال التلقائي المخفي ---
         const autoForm = document.createElement('form');
         autoForm.method = 'POST';
         autoForm.action = FORM_BASE_URL;
@@ -320,7 +332,6 @@
         document.body.appendChild(autoForm);
         autoForm.submit();
         document.body.removeChild(autoForm);
-        // -----------------------------------
 
         document.getElementById('result-screen').style.display = 'block';
     }
@@ -335,7 +346,8 @@
     }
 
     function goToWhatsApp() {
-        const msg = `أستاذ ريان، الطالب (${studentName}) حقق ${score} في مختبر (${currentLab})`;
+        const teacherName = document.getElementById('ui-teacher-name').innerText;
+        const msg = `أستاذ ${teacherName}، الطالب (${studentName}) حقق ${score} في مختبر (${currentLab})`;
         window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`);
     }
 </script>
