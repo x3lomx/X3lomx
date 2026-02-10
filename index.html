@@ -277,7 +277,7 @@
                 b.className = 'option'; b.innerText = opt;
                 b.onclick = () => {
                     clearInterval(timerInterval);
-                    if(opt === qs[n].correct) { b.classList.add('correct'); score += 100; soundCorrect.play(); } 
+                    if(opt === qs[n].correct) { b.classList.add('correct'); score += 1; soundCorrect.play(); } 
                     else { b.classList.add('wrong'); soundWrong.play(); }
                     setTimeout(()=>showQ(n+1), 800);
                 };
@@ -314,7 +314,7 @@
         document.getElementById('quiz-area').style.display = 'none';
         document.getElementById('finalName').innerText = studentName;
         document.getElementById('finalLab').innerText = "مختبر: " + currentLab;
-        document.getElementById('finalScore').innerText = score + " XP";
+        document.getElementById('finalScore').innerText = score + " نقطة";
         document.getElementById('resForm').src = `${FORM_BASE_URL}?${ENTRY_NAME}=${encodeURIComponent(studentName)}&${ENTRY_SCORE}=${score}`;
         document.getElementById('result-screen').style.display = 'block';
     }
@@ -334,4 +334,5 @@
     }
 </script>
 </body>
+
 </html>
