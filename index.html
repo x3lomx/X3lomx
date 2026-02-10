@@ -45,19 +45,15 @@
         .orbit { position: absolute; border: 1px solid rgba(255,255,255,0.05); border-radius: 50%; top: 50%; left: 50%; transform: translate(-50%, -50%); }
         .planet { position: absolute; border-radius: 50%; top: -5px; left: 50%; transform: translateX(-50%); }
         
-        /* عطارد */
         .mercury-orbit { width: 150px; height: 150px; animation: spin 5s linear infinite; }
         .mercury { width: 8px; height: 8px; background: #A5A5A5; }
         
-        /* الزهرة */
         .venus-orbit { width: 220px; height: 220px; animation: spin 8s linear infinite; }
         .venus { width: 12px; height: 12px; background: #E3BB76; }
         
-        /* الأرض */
         .earth-orbit { width: 300px; height: 300px; animation: spin 12s linear infinite; }
         .earth { width: 14px; height: 14px; background: #2271B3; box-shadow: 0 0 10px var(--blue); }
         
-        /* المريخ */
         .mars-orbit { width: 380px; height: 380px; animation: spin 15s linear infinite; }
         .mars { width: 10px; height: 10px; background: #E27B58; }
 
@@ -140,7 +136,7 @@
         </div>
         
         <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:20px;">
-            <button class="btn" style="background:var(--green); color:#000;" onclick="sendResult()">📩 إرسال النتيجة</button>
+            <button id="sendBtn" class="btn" style="background:var(--green); color:#000;" onclick="sendResult()">📩 إرسال النتيجة</button>
             <button class="btn" style="background:orange" onclick="saveFullReport()">📸 حفظ التقرير</button>
             <button id="retryBtn" class="btn" style="background:none; border:1px solid #fff;" onclick="retryQuiz()">🔄 إعادة</button>
             <button class="btn" style="background:none; border:1px solid var(--blue); color:var(--blue);" onclick="backToLabs()">🏠 المختبرات</button>
@@ -148,17 +144,16 @@
     </div>
 </div>
 
-<iframe name="hidden_iframe" style="display:none;"></iframe>
-
 <script>
+    // إعدادات الروابط (تأكد من صحتها في ملفك)
     const SHEET_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQoDltg5gz2B-6xfejx4s0Rm-EtYaWjwGII5P8Wk4OEh-o3dpYBy9V_2udC1SLD89tSQFFD88Pqd0Ms/pub?gid=0&single=true&output=csv';
     const FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSd6qV0wUZIOTA3maN-KuBBhzivjeF0lCYD37-Ecr4FErVu6Xw/formResponse';
-    const ENTRY_NAME = 'entry.851707482', ENTRY_SCORE = 'entry.1149023992';
+    const ENTRY_NAME = 'entry.851707482';
+    const ENTRY_SCORE = 'entry.1149023992';
 
     let allQuestions = [], studentName = "", score = 0, currentLab = "";
     let timeLeft = 30, timerInterval, labSettings = {}, studentAnswers = [];
 
-    // الأصوات
     const soundCorrect = new Audio('https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3');
     const soundWrong = new Audio('https://assets.mixkit.co/active_storage/sfx/2018/2018-preview.mp3');
 
@@ -259,12 +254,36 @@
         });
     }
 
-    function sendResult() {
-        const f = document.createElement('form'); f.method = 'POST'; f.action = FORM_URL; f.target = 'hidden_iframe';
-        const n = document.createElement('input'); n.name = ENTRY_NAME; n.value = studentName;
-        const s = document.createElement('input'); s.name = ENTRY_SCORE; s.value = score + " في " + currentLab;
-        f.appendChild(n); f.appendChild(s); document.body.appendChild(f); f.submit();
-        alert("تم إرسال نتيجتك للمعلم بنجاح!");
+    // الوظيفة المحدثة لإرسال النتائج
+    async function sendResult() {
+        const btn = document.getElementById('sendBtn');
+        const originalText = btn.innerText;
+        
+        btn.disabled = true;
+        btn.innerText = "⏳ جاري الإرسال...";
+
+        const formData = new FormData();
+        formData.append(ENTRY_NAME, studentName);
+        formData.append(ENTRY_SCORE, `${score} XP في مختبر ${currentLab}`);
+
+        try {
+            // استخدام fetch مع وضع no-cors للإرسال إلى Google Forms
+            await fetch(FORM_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                body: formData
+            });
+
+            btn.style.background = "#555";
+            btn.innerText = "✅ تم الإرسال بنجاح";
+            alert("تم تسجيل نتيجتك في نظام المعلم بنجاح! 🚀");
+            
+        } catch (error) {
+            console.error('Error:', error);
+            btn.disabled = false;
+            btn.innerText = originalText;
+            alert("عذراً، حدث خطأ أثناء الإرسال. تأكد من اتصالك بالإنترنت.");
+        }
     }
 
     function saveFullReport() {
