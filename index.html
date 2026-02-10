@@ -12,68 +12,39 @@
     <style>
         :root { --blue: #00f3ff; --purple: #bc13fe; --bg: #05070a; --green: #39ff14; --pink: #ff0055; }
         
-        body, html { 
-            height: 100%; margin: 0; padding: 0;
-            background: var(--bg); color: #fff; font-family: 'Cairo', sans-serif; 
-            overflow-x: hidden; display: flex; flex-direction: column;
-        }
-
-        .space-bg {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -1; background: radial-gradient(circle at center, #1b2735 0%, #090a0f 100%);
-            overflow: hidden;
-        }
-
-        .star {
-            position: absolute; background: white; border-radius: 50%;
-            opacity: 0.5; animation: twinkle var(--duration) infinite;
-        }
-
+        body, html { height: 100%; margin: 0; padding: 0; background: var(--bg); color: #fff; font-family: 'Cairo', sans-serif; overflow-x: hidden; display: flex; flex-direction: column; }
+        .space-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: radial-gradient(circle at center, #1b2735 0%, #090a0f 100%); overflow: hidden; }
+        .star { position: absolute; background: white; border-radius: 50%; opacity: 0.5; animation: twinkle var(--duration) infinite; }
         @keyframes twinkle { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
 
-        .school-header { 
-            text-align: center; padding: 25px 20px;
-            background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(5px);
-            border-bottom: 1px solid rgba(0, 243, 255, 0.2);
-        }
-        .school-header h1 { color: var(--blue); margin: 0; font-size: clamp(1.2rem, 4vw, 2rem); text-shadow: 0 0 15px var(--blue); }
+        .school-header { text-align: center; padding: 20px; background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(5px); border-bottom: 1px solid rgba(0, 243, 255, 0.2); }
+        .school-header h1 { color: var(--blue); margin: 0; font-size: 1.8rem; text-shadow: 0 0 15px var(--blue); }
         .highlight { color: var(--green); font-weight: bold; }
 
         .main-wrapper { flex: 1; display: flex; align-items: center; justify-content: center; padding: 15px; }
         .app-container { width: 100%; max-width: 700px; }
 
-        .card { 
-            background: rgba(255,255,255,0.05); backdrop-filter: blur(15px);
-            padding: 30px; border-radius: 25px; border: 1px solid rgba(0, 243, 255, 0.2); 
-            text-align: center; position: relative;
-        }
+        .card { background: rgba(255,255,255,0.05); backdrop-filter: blur(15px); padding: 25px; border-radius: 20px; border: 1px solid rgba(0, 243, 255, 0.2); text-align: center; margin-bottom: 15px; }
 
-        /* توسيط الصورة */
-        .question-img { 
-            max-width: 95%; max-height: 230px; border-radius: 12px; 
-            margin: 0 auto 15px auto; display: block; 
-            border: 2px solid var(--purple); box-shadow: 0 0 10px var(--purple);
-        }
+        .question-img { max-width: 90%; max-height: 200px; border-radius: 12px; margin: 10px auto; display: block; border: 2px solid var(--purple); }
 
-        .btn { 
-            background: var(--purple); color: #fff; border: none; 
-            padding: 12px 25px; border-radius: 10px; cursor: pointer; 
-            font-weight: bold; transition: 0.3s; font-size: 1rem;
-            display: inline-flex; align-items: center; gap: 8px; justify-content: center;
-        }
-        .btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px var(--purple); }
+        .btn { background: var(--purple); color: #fff; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.3s; display: inline-flex; align-items: center; gap: 8px; justify-content: center; font-size: 0.9rem; }
+        .btn:hover { transform: scale(1.03); box-shadow: 0 0 15px var(--purple); }
+        .btn-send { background: var(--blue) !important; color: #000 !important; width: 100%; font-size: 1.1rem; padding: 15px; }
+        .btn-outline { background: transparent; border: 1px solid var(--blue); color: var(--blue); }
 
-        .btn-send { background: var(--blue) !important; color: #000 !important; width: 100%; padding: 18px; font-size: 1.2rem; margin-top: 10px; }
-        .btn-sent { background: var(--green) !important; cursor: default; }
+        input[type="text"] { padding: 12px; width: 80%; background: rgba(0,0,0,0.4); color: #fff; border: 1px solid var(--blue); border-radius: 10px; text-align: center; margin-bottom: 15px; outline: none; }
 
-        input[type="text"] { padding: 15px; width: 80%; background: rgba(0,0,0,0.4); color: #fff; border: 1px solid var(--blue); border-radius: 12px; text-align: center; font-size: 1.1rem; margin-bottom: 20px; outline: none; }
-
-        .option { background: rgba(255,255,255,0.08); padding: 15px; margin: 10px 0; border-radius: 12px; cursor: pointer; border: 1px solid transparent; text-align: right; transition: 0.2s; }
-        .option:hover { background: rgba(0, 243, 255, 0.15); border-color: var(--blue); }
+        .option { background: rgba(255,255,255,0.08); padding: 12px; margin: 8px 0; border-radius: 10px; cursor: pointer; text-align: right; border: 1px solid transparent; }
+        .option:hover { background: rgba(0, 243, 255, 0.1); border-color: var(--blue); }
         .correct { background: var(--green) !important; color: #000; font-weight: bold; }
         .wrong { background: var(--pink) !important; color: #fff; }
-        
-        .timer-bar { height: 6px; background: var(--blue); width: 100%; transition: 1s linear; border-radius: 10px; margin-bottom: 15px; }
+
+        /* ستايل تقرير الأسئلة النهائي */
+        #report-area { background: #fff; color: #000; padding: 20px; border-radius: 10px; text-align: right; display: none; margin-top: 20px; }
+        .report-item { border-bottom: 1px solid #ccc; padding: 10px 0; }
+        .ans-true { color: green; font-weight: bold; }
+        .ans-false { color: red; font-weight: bold; }
 
         #result-screen, #quiz-area, #tabs-container { display: none; }
     </style>
@@ -84,7 +55,7 @@
 
 <div class="school-header">
     <h1 id="ui-school-name">مدرسة ذات الصواري</h1>
-    <div style="font-size: 0.85rem; margin-top:5px;">
+    <div style="font-size: 0.8rem; margin-top:5px;">
         المدير: <span class="highlight" id="ui-manager-name">...</span> | 
         المعلم: <span class="highlight" id="ui-teacher-name">...</span>
     </div>
@@ -92,43 +63,50 @@
 
 <div class="main-wrapper">
     <div class="app-container">
+        
         <div id="login-screen" class="card">
-            <h2 style="color: var(--blue);">دخول المختبر الافتراضي</h2>
+            <h2>مختبر العلوم الرقمي 🧪</h2>
             <input type="text" id="stdName" placeholder="أدخل اسمك الثلاثي">
             <br>
-            <button class="btn" onclick="startApp()">ابدأ المهمة 🚀</button>
+            <button class="btn" onclick="startApp()">دخول 🚀</button>
         </div>
 
         <div id="tabs-container" class="card">
-            <h3 style="margin-bottom:20px;">اختر المختبر المطلوب</h3>
+            <h3 style="color: var(--blue);">اختر المختبر</h3>
             <div id="tabs" style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;"></div>
         </div>
         
         <div id="quiz-area" class="card">
-            <div style="display:flex; justify-content: space-between; margin-bottom:10px;">
-                <span id="timerText">30s</span>
+            <div style="display:flex; justify-content: space-between; font-family: 'Orbitron';">
+                <span id="timerText" style="color:var(--blue)">30s</span>
                 <span id="qCounter"></span>
             </div>
-            <div class="timer-bar" id="timerBar"></div>
-            
             <img id="qImage" class="question-img" src="" style="display: none;">
-            <h2 id="qText">جاري التحميل...</h2>
+            <h2 id="qText" style="font-size: 1.1rem; margin:15px 0;"></h2>
             <div id="optionsContainer"></div>
         </div>
 
         <div id="result-screen">
-            <div id="photo-card" class="card">
-                <h2 style="color: var(--green);">🌟 أحسنت يا بطل 🌟</h2>
-                <h3 id="finalName"></h3>
-                <h4 id="finalLab" style="color: var(--blue);"></h4>
-                <div id="finalScore" style="font-family:'Orbitron'; font-size:3rem; margin:15px 0;"></div>
+            <div id="full-report-capture">
+                <div id="photo-card" class="card" style="border-color: var(--green); margin-bottom:5px;">
+                    <h2 style="color: var(--green); margin:0;">🌟 اكتملت المهمة 🌟</h2>
+                    <h3 id="finalName" style="margin:5px 0;"></h3>
+                    <h4 id="finalLab" style="color: var(--blue); margin:5px 0;"></h4>
+                    <div id="finalScore" style="font-family:'Orbitron'; font-size:2.5rem; color:var(--purple);"></div>
+                </div>
+                <div id="questions-report" style="background: rgba(255,255,255,0.9); color: #000; border-radius: 15px; padding: 15px; display: none; text-align: right; font-size: 0.8rem;">
+                    <h3 style="text-align:center; border-bottom: 2px solid #333;">تفاصيل الإجابات</h3>
+                    <div id="report-list"></div>
+                </div>
             </div>
 
             <button id="sendBtn" class="btn btn-send" onclick="sendResult()">📩 ارسالها للمعلم</button>
 
-            <div style="display:flex; gap:10px; margin-top:15px;">
-                <button class="btn" style="flex:1; background:#25D366" onclick="goToWhatsApp()">واتساب</button>
-                <button class="btn" style="flex:1; background:orange" onclick="location.reload()">الرئيسية</button>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:10px;">
+                <button class="btn" style="background:#25D366" onclick="goToWhatsApp()">📱 واتساب</button>
+                <button class="btn" style="background:#e91e63" onclick="saveFullReport()">📸 حفظ وحل الأسئلة</button>
+                <button class="btn btn-outline" onclick="retryQuiz()">🔄 إعادة</button>
+                <button class="btn btn-outline" onclick="backToLabs()">🏠 المختبرات</button>
             </div>
         </div>
     </div>
@@ -144,18 +122,16 @@
 
     let allQuestions = [], studentName = "", score = 0, currentLab = "";
     let timeLeft = 30, timerInterval, teacherPhone = "966533347331";
+    let studentAnswers = []; // لتخزين إجابات الطالب للتقرير
 
     const soundCorrect = new Audio('https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3');
     const soundWrong = new Audio('https://assets.mixkit.co/active_storage/sfx/2018/2018-preview.mp3');
 
-    window.onload = () => {
-        createStars();
-        fetchData();
-    };
+    window.onload = () => { createStars(); fetchData(); };
 
     function createStars() {
         const space = document.getElementById('space');
-        for(let i=0; i<50; i++) {
+        for(let i=0; i<40; i++) {
             const s = document.createElement('div');
             s.className = 'star';
             s.style.width = s.style.height = Math.random()*2+'px';
@@ -166,28 +142,22 @@
     }
 
     function fetchData() {
-        Papa.parse(SHEET_CSV, { 
-            download: true, header: true, 
-            complete: (res) => { 
-                const d = res.data;
-                if(d.length > 0) {
-                    document.getElementById('ui-school-name').innerText = d[0]['المدرسة'] || "مدرسة ذات الصواري";
-                    document.getElementById('ui-manager-name').innerText = d[0]['المدير'] || "أ. سهيل عقيلي";
-                    document.getElementById('ui-teacher-name').innerText = d[0]['المعلم'] || "أ. ريان الاسمري";
-                    if(d[0]['رقم الهاتف']) teacherPhone = d[0]['رقم الهاتف'].toString().includes('966') ? d[0]['رقم الهاتف'] : '966' + d[0]['رقم الهاتف'].slice(-9);
-                }
-                allQuestions = d.filter(q => q['المختبر']).map(q => ({
-                    lab: q['المختبر'], question: q['السؤال'], correct: q['الإجابة الصحيحة'], wrong: q['إجابة خاطئة'], image: q['رابط الصورة']
-                }));
-                renderLabs(); 
-            } 
-        });
+        Papa.parse(SHEET_CSV, { download: true, header: true, complete: (res) => { 
+            const d = res.data;
+            if(d.length > 0) {
+                document.getElementById('ui-school-name').innerText = d[0]['المدرسة'] || "مدرسة ذات الصواري";
+                document.getElementById('ui-manager-name').innerText = d[0]['المدير'] || "أ. سهيل عقيلي";
+                document.getElementById('ui-teacher-name').innerText = d[0]['المعلم'] || "أ. ريان الاسمري";
+                if(d[0]['رقم الهاتف']) teacherPhone = d[0]['رقم الهاتف'].toString().includes('966') ? d[0]['رقم الهاتف'] : '966' + d[0]['رقم الهاتف'].slice(-9);
+            }
+            allQuestions = d.filter(q => q['المختبر']).map(q => ({ lab: q['المختبر'], question: q['السؤال'], correct: q['الإجابة الصحيحة'], wrong: q['إجابة خاطئة'], image: q['رابط الصورة'] }));
+            renderLabs(); 
+        }});
     }
 
     function renderLabs() {
         const labs = [...new Set(allQuestions.map(q => q.lab))];
-        const div = document.getElementById('tabs');
-        div.innerHTML = "";
+        const div = document.getElementById('tabs'); div.innerHTML = "";
         labs.forEach(l => { div.innerHTML += `<button class="btn" onclick="startQuiz('${l}')">${l}</button>`; });
     }
 
@@ -199,7 +169,7 @@
     }
 
     function startQuiz(lab) {
-        currentLab = lab; score = 0;
+        currentLab = lab; score = 0; studentAnswers = [];
         document.getElementById('tabs-container').style.display = 'none';
         document.getElementById('quiz-area').style.display = 'block';
         loadQuestion(0);
@@ -208,33 +178,25 @@
     function loadQuestion(idx) {
         const qs = allQuestions.filter(q => q.lab === currentLab);
         if(idx >= qs.length) return showResult();
-        
         document.getElementById('qCounter').innerText = `${idx+1} / ${qs.length}`;
         const q = qs[idx];
         document.getElementById('qText').innerText = q.question;
-        
         const img = document.getElementById('qImage');
         if(q.image) { img.src = q.image; img.style.display = "block"; } else { img.style.display = "none"; }
         
-        timeLeft = 30;
-        updateTimer();
-        clearInterval(timerInterval);
-        timerInterval = setInterval(() => {
-            timeLeft--; updateTimer();
-            if(timeLeft <= 0) { clearInterval(timerInterval); loadQuestion(idx+1); }
-        }, 1000);
+        timeLeft = 30; updateTimer(); clearInterval(timerInterval);
+        timerInterval = setInterval(() => { timeLeft--; updateTimer(); if(timeLeft <= 0) { studentAnswers.push({q: q.question, a: "انتهى الوقت", c: false}); loadQuestion(idx+1); } }, 1000);
 
         const opts = [q.correct, q.wrong].sort(() => Math.random() - 0.5);
-        const container = document.getElementById('optionsContainer');
-        container.innerHTML = "";
+        const container = document.getElementById('optionsContainer'); container.innerHTML = "";
         opts.forEach(o => {
-            const div = document.createElement('div');
-            div.className = 'option'; div.innerText = o;
+            const div = document.createElement('div'); div.className = 'option'; div.innerText = o;
             div.onclick = () => {
                 clearInterval(timerInterval);
-                if(o === q.correct) { div.classList.add('correct'); score++; soundCorrect.play(); } 
-                else { div.classList.add('wrong'); soundWrong.play(); }
-                setTimeout(() => loadQuestion(idx+1), 800);
+                const isCorrect = (o === q.correct);
+                if(isCorrect) { div.classList.add('correct'); score++; soundCorrect.play(); } else { div.classList.add('wrong'); soundWrong.play(); }
+                studentAnswers.push({q: q.question, a: o, c: isCorrect});
+                setTimeout(() => loadQuestion(idx+1), 600);
             };
             container.appendChild(div);
         });
@@ -242,7 +204,6 @@
 
     function updateTimer() {
         document.getElementById('timerText').innerText = timeLeft + "s";
-        document.getElementById('timerBar').style.width = (timeLeft/30)*100 + "%";
     }
 
     function showResult() {
@@ -251,40 +212,50 @@
         document.getElementById('finalName').innerText = studentName;
         document.getElementById('finalLab').innerText = "مختبر: " + currentLab;
         document.getElementById('finalScore').innerText = score + " XP";
+        
+        // بناء تقرير الأسئلة
+        const list = document.getElementById('report-list');
+        list.innerHTML = "";
+        studentAnswers.forEach((ans, i) => {
+            list.innerHTML += `<div class="report-item"><b>س${i+1}: ${ans.q}</b><br>إجابتك: <span class="${ans.c?'ans-true':'ans-false'}">${ans.a}</span> ${ans.c?'✅':'❌'}</div>`;
+        });
+    }
+
+    function saveFullReport() {
+        const report = document.getElementById('questions-report');
+        report.style.display = "block"; // إظهاره مؤقتاً للتصوير
+        
+        html2canvas(document.getElementById('full-report-capture'), { backgroundColor: "#05070a" }).then(canvas => {
+            const link = document.createElement('a');
+            link.download = `تقرير_${studentName}_${currentLab}.png`;
+            link.href = canvas.toDataURL();
+            link.click();
+            report.style.display = "none"; // إخفاؤه بعد التصوير
+        });
     }
 
     function sendResult() {
         const btn = document.getElementById('sendBtn');
         btn.innerText = "⏳ جاري الإرسال...";
-        
         const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = FORM_URL;
-        form.target = 'hidden_iframe';
-
+        form.method = 'POST'; form.action = FORM_URL; form.target = 'hidden_iframe';
         const nInp = document.createElement('input'); nInp.name = ENTRY_NAME; nInp.value = studentName;
         const sInp = document.createElement('input'); sInp.name = ENTRY_SCORE; sInp.value = score + " في " + currentLab;
-        
         form.appendChild(nInp); form.appendChild(sInp);
-        document.body.appendChild(form);
-        form.submit();
-        
-        setTimeout(() => {
-            btn.innerText = "✅ تم الإرسال للمعلم";
-            btn.classList.add('btn-sent');
-            btn.onclick = null;
-            document.body.removeChild(form);
-        }, 1500);
+        document.body.appendChild(form); form.submit();
+        setTimeout(() => { btn.innerText = "✅ تم الإرسال للمعلم"; btn.classList.add('btn-sent'); document.body.removeChild(form); }, 1500);
     }
+
+    function backToLabs() {
+        document.getElementById('result-screen').style.display = 'none';
+        document.getElementById('tabs-container').style.display = 'block';
+    }
+
+    function retryQuiz() { startQuiz(currentLab); }
 
     function goToWhatsApp() {
         const msg = `الأستاذ الكريم، الطالب (${studentName}) حقق ${score} في تجربة (${currentLab})`;
         window.open(`https://wa.me/${teacherPhone}?text=${encodeURIComponent(msg)}`);
-    }
-
-    function updateTimer() {
-        document.getElementById('timerText').innerText = timeLeft + "s";
-        document.getElementById('timerBar').style.width = (timeLeft/30)*100 + "%";
     }
 </script>
 </body>
