@@ -12,11 +12,10 @@
     <style>
         :root { --blue: #00f3ff; --purple: #bc13fe; --bg: #05070a; --green: #39ff14; --pink: #ff0055; }
         body, html { height: 100%; margin: 0; padding: 0; background: var(--bg); color: #fff; font-family: 'Cairo', sans-serif; overflow-x: hidden; display: flex; flex-direction: column; }
-        .space-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: radial-gradient(circle at center, #1b2735 0%, #05070a 100%); }
-        .star { position: absolute; background: white; border-radius: 50%; opacity: 0.5; animation: twinkle var(--duration) infinite; }
-        @keyframes twinkle { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
         
-        /* نظام الكواكب */
+        .space-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: radial-gradient(circle at center, #1b2735 0%, #05070a 100%); }
+        
+        /* نظام الكواكب الداخلية */
         .orbit { position: absolute; border: 1px solid rgba(255,255,255,0.05); border-radius: 50%; top: 50%; left: 50%; transform: translate(-50%, -50%); }
         .planet { position: absolute; border-radius: 50%; top: -5px; left: 50%; transform: translateX(-50%); }
         .mercury-orbit { width: 150px; height: 150px; animation: spin 5s linear infinite; }
@@ -58,34 +57,34 @@
 
 <div class="main-wrapper">
     <div id="login-screen" class="card">
-        <h1 style="font-family:'Orbitron'; color:var(--blue);">SCIENCE LAB</h1>
+        <h1 style="font-family:'Orbitron'; color:var(--blue); text-shadow: 0 0 10px var(--blue);">SCIENCE LAB</h1>
         <input type="text" id="stdName" placeholder="أدخل اسمك يا بطل">
         <br>
         <button class="btn" onclick="startApp()">دخول المختبر 🧪</button>
     </div>
 
     <div id="tabs-container" class="card">
-        <h3 style="color: var(--blue);">اختر المختبر:</h3>
+        <h3 style="color: var(--blue);">اختر المختبر الاستكشافي:</h3>
         <div id="tabs" style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;"></div>
     </div>
 
     <div id="quiz-area" class="card">
-        <div style="display:flex; justify-content: space-between;">
+        <div style="display:flex; justify-content: space-between; font-family: 'Orbitron';">
             <span id="timerText" style="color:var(--pink)">30s</span>
             <span id="qCounter"></span>
         </div>
-        <h2 id="qText" style="margin:20px 0;"></h2>
+        <h2 id="qText" style="margin:20px 0; font-size: 1.3rem;"></h2>
         <div id="optionsContainer"></div>
     </div>
 
     <div id="result-screen" class="card">
-        <h2 style="color: var(--green);">🎉 النتيجة النهائية 🎉</h2>
+        <h2 style="color: var(--green);">🎉 اكتملت المهمة بنجاح 🎉</h2>
         <h3 id="finalName"></h3>
-        <div id="finalScore" style="font-size:3rem; color:var(--purple); margin:20px 0;"></div>
+        <div id="finalScore" style="font-size:3.5rem; color:var(--purple); margin:20px 0; font-family: 'Orbitron';"></div>
         <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-            <button id="retryBtn" class="btn" style="background:orange; display:none;" onclick="retryQuiz()">🔄 إعادة المحاولة</button>
-            <button class="btn" onclick="sendResult()">📩 إرسال</button>
-            <button class="btn" style="grid-column: span 2; background:none; border:1px solid var(--blue);" onclick="backToLabs()">🏠 العودة للمختبرات</button>
+            <button id="retryBtn" class="btn" style="background:orange;" onclick="retryQuiz()">🔄 إعادة المحاولة</button>
+            <button class="btn" style="background:var(--green); color:#000;" onclick="sendResult()">📩 إرسال النتيجة</button>
+            <button class="btn" style="grid-column: span 2; background:none; border:1px solid var(--blue); margin-top:10px;" onclick="backToLabs()">🏠 العودة للمختبرات</button>
         </div>
     </div>
 </div>
@@ -93,9 +92,10 @@
 <script>
     const SHEET_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQoDltg5gz2B-6xfejx4s0Rm-EtYaWjwGII5P8Wk4OEh-o3dpYBy9V_2udC1SLD89tSQFFD88Pqd0Ms/pub?gid=0&single=true&output=csv';
     const FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSd6qV0wUZIOTA3maN-KuBBhzivjeF0lCYD37-Ecr4FErVu6Xw/formResponse';
-    
+    const ENTRY_NAME = 'entry.851707482', ENTRY_SCORE = 'entry.1149023992';
+
     let allQuestions = [], studentName = "", score = 0, currentLab = "";
-    let labSettings = {}; // لتخزين إعدادات كل مختبر (مثل إعادة المحاولة)
+    let labRetryConfig = {}; // تخزين إعدادات الإخفاء لكل مختبر
 
     const soundCorrect = new Audio('https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3');
     const soundWrong = new Audio('https://assets.mixkit.co/active_storage/sfx/2018/2018-preview.mp3');
@@ -111,16 +111,13 @@
             }
             
             allQuestions = d.filter(q => q['المختبر']).map(q => {
-                // تحديث منطق التحقق من كلمة "نعم" لتكون أكثر دقة وتتجاهل المسافات
-                const canRetry = q['إعادة'] && q['إعادة'].trim() === "نعم";
-                labSettings[q['المختبر'].trim()] = canRetry;
+                const labName = q['المختبر'].trim();
+                const hideEntry = q['إعادة'] ? q['إعادة'].trim() : "";
                 
-                return { 
-                    lab: q['المختبر'].trim(), 
-                    question: q['السؤال'], 
-                    correct: q['الإجابة الصحيحة'], 
-                    wrong: q['إجابة خاطئة'] 
-                };
+                // إذا كان المكتوب في خانة "إعادة" يساوي اسم المختبر، سنخفي الزر لاحقاً
+                labRetryConfig[labName] = hideEntry;
+
+                return { lab: labName, question: q['السؤال'], correct: q['الإجابة الصحيحة'], wrong: q['إجابة خاطئة'] };
             });
             renderLabs();
         }});
@@ -136,7 +133,7 @@
 
     function startApp() {
         studentName = document.getElementById('stdName').value;
-        if(!studentName) return alert("سجل اسمك أولاً!");
+        if(!studentName) return alert("من فضلك أدخل اسمك أولاً!");
         document.getElementById('login-screen').style.display = 'none';
         document.getElementById('tabs-container').style.display = 'block';
     }
@@ -176,17 +173,22 @@
         document.getElementById('finalName').innerText = studentName;
         document.getElementById('finalScore').innerText = score + " XP";
         
-        // إظهار أو إخفاء زر الإعادة بناءً على إعدادات المختبر الحالي
         const retryBtn = document.getElementById('retryBtn');
-        if (labSettings[currentLab] === true) {
-            retryBtn.style.display = "inline-flex";
-        } else {
+        
+        // المنطق الجديد: إذا كان المكتوب في خانة إعادة = اسم المختبر الحالي -> اخفِ الزر
+        if (labRetryConfig[currentLab] === currentLab) {
             retryBtn.style.display = "none";
+        } else {
+            retryBtn.style.display = "inline-flex"; // يظهر الزر في حال كانت الخانة فارغة أو لا تطابق الاسم
         }
     }
 
     async function sendResult() {
-        alert("تم إرسال نتيجتك بنجاح!");
+        const formData = new FormData();
+        formData.append(ENTRY_NAME, studentName);
+        formData.append(ENTRY_SCORE, `${score} XP في ${currentLab}`);
+        await fetch(FORM_URL, { method: 'POST', mode: 'no-cors', body: formData });
+        alert("تم إرسال النتيجة إلى سجلات المعلم بنجاح! ✅");
     }
 
     function backToLabs() { 
