@@ -31,7 +31,6 @@
 
         @keyframes twinkle { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
 
-        /* --- تصميم سيبراني فضائي جذاب للواجهة --- */
         #login-screen {
             position: relative;
             overflow: hidden;
@@ -40,24 +39,11 @@
             animation: borderGlow 4s infinite alternate;
         }
 
-        #login-screen h2 {
-            font-family: 'Orbitron', 'Cairo', sans-serif;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            animation: textPulse 2s infinite ease-in-out;
-        }
-
         @keyframes borderGlow {
             from { border-color: var(--blue); box-shadow: 0 0 20px rgba(0, 243, 255, 0.3); }
             to { border-color: var(--purple); box-shadow: 0 0 30px rgba(188, 19, 254, 0.4); }
         }
 
-        @keyframes textPulse {
-            0%, 100% { text-shadow: 0 0 10px var(--blue); transform: scale(1); }
-            50% { text-shadow: 0 0 20px var(--blue), 0 0 30px var(--blue); transform: scale(1.02); }
-        }
-
-        /* تحسين زر الدخول بشكل سيبراني */
         .cyber-btn {
             position: relative;
             background: transparent !important;
@@ -66,15 +52,7 @@
             overflow: hidden;
             z-index: 1;
         }
-        .cyber-btn:before {
-            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(0, 243, 255, 0.4), transparent);
-            transition: 0.5s; z-index: -1;
-        }
-        .cyber-btn:hover:before { left: 100%; }
         .cyber-btn:hover { background: var(--blue) !important; color: #000 !important; box-shadow: 0 0 40px var(--blue); }
-
-        /* -------------------------------------- */
 
         .school-header { 
             text-align: center; padding: 30px 20px;
@@ -106,10 +84,8 @@
         .btn:hover { transform: scale(1.05); box-shadow: 0 0 20px var(--purple); }
         
         .btn-outline { background: transparent; border: 1px solid var(--blue); color: var(--blue); }
-        .btn-outline:hover { background: var(--blue); color: #000; }
 
-        input[type="text"] { padding: 15px; width: 85%; max-width: 350px; background: rgba(0,0,0,0.5); color: #fff; border: 1px solid var(--purple); border-radius: 12px; text-align: center; font-size: 1.1rem; margin-bottom: 20px; outline: none; transition: 0.3s; }
-        input[type="text"]:focus { border-color: var(--blue); box-shadow: 0 0 15px var(--blue); }
+        input[type="text"] { padding: 15px; width: 85%; max-width: 350px; background: rgba(0,0,0,0.5); color: #fff; border: 1px solid var(--purple); border-radius: 12px; text-align: center; font-size: 1.1rem; margin-bottom: 20px; outline: none; }
 
         .option { background: rgba(255,255,255,0.08); padding: 15px; margin: 10px 0; border-radius: 12px; cursor: pointer; border: 1px solid transparent; text-align: right; transition: 0.2s; }
         .option:hover { background: rgba(0, 243, 255, 0.2); border-color: var(--blue); }
@@ -121,8 +97,8 @@
 
         #result-screen, #quiz-area { display: none; }
         
-        .send-section { background: #fff; color: #000; padding: 15px; border-radius: 15px; margin: 20px 0; border-top: 6px solid var(--green); }
-        iframe { width: 100%; height: 300px; border: none; border-radius: 8px; }
+        /* تحسين منطقة حالة الإرسال */
+        .send-status { background: rgba(57, 255, 20, 0.1); color: var(--green); padding: 15px; border-radius: 15px; margin: 20px 0; border: 1px solid var(--green); }
 
         .action-buttons { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 15px; }
     </style>
@@ -144,7 +120,6 @@
         <div id="login-screen" class="card">
             <div style="font-size: 3rem; margin-bottom: 10px;">👨‍🚀</div>
             <h2 style="color: var(--blue); margin-bottom: 25px;">مختبر العلوم الافتراضي</h2>
-            <p style="font-size: 0.8rem; color: var(--blue); margin-bottom: 20px; opacity: 0.8;">جاهز للرحلة العلمية؟ أدخل اسمك للبدء</p>
             <input type="text" id="stdName" placeholder="أدخل اسمك الثلاثي">
             <br>
             <button class="btn cyber-btn" onclick="startApp()">تشغيل المحركات والدخول 🚀</button>
@@ -177,9 +152,9 @@
                 <div id="finalScore" style="font-family:'Orbitron'; font-size:3.5rem; color:var(--purple); margin: 8px 0;"></div>
             </div>
 
-            <div class="send-section">
-                <p style="font-weight:bold; color:red; margin-bottom:8px;">⚠️ هام: اضغط "إرسال" لتسجيل نتيجتك</p>
-                <iframe id="resForm" src=""></iframe>
+            <div class="send-status">
+                <p style="font-weight:bold; margin:0;">✅ تم إرسال نتيجتك تلقائياً إلى المعلم</p>
+                <p style="font-size: 0.8rem; margin: 5px 0 0 0; opacity: 0.8;">لا حاجة للضغط على أي زر إضافي.</p>
             </div>
 
             <div class="action-buttons">
@@ -192,17 +167,19 @@
     </div>
 </div>
 
+<iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
+
 <script>
     const SHEET_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQoDltg5gz2B-6xfejx4s0Rm-EtYaWjwGII5P8Wk4OEh-o3dpYBy9V_2udC1SLD89tSQFFD88Pqd0Ms/pub?gid=0&single=true&output=csv'; 
-    const FORM_BASE_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSd6qV0wUZIOTA3maN-KuBBhzivjeF0lCYD37-Ecr4FErVu6Xw/viewform'; 
+    const FORM_BASE_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSd6qV0wUZIOTA3maN-KuBBhzivjeF0lCYD37-Ecr4FErVu6Xw/formResponse'; 
     const ENTRY_NAME = 'entry.851707482'; 
     const ENTRY_SCORE = 'entry.1149023992'; 
 
-    const soundCorrect = new Audio('https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3');
-    const soundWrong = new Audio('https://assets.mixkit.co/active_storage/sfx/2018/2018-preview.mp3');
-
     let allQuestions = [], studentName = "", score = 0, currentLab = "";
     let timeLeft = 30, timerInterval;
+
+    const soundCorrect = new Audio('https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3');
+    const soundWrong = new Audio('https://assets.mixkit.co/active_storage/sfx/2018/2018-preview.mp3');
 
     function createSpace() {
         const space = document.getElementById('space');
@@ -264,8 +241,18 @@
             document.getElementById('qCounter').innerText = `${n+1} / ${qs.length}`;
             document.getElementById('qText').innerText = qs[n].question;
             const imgTag = document.getElementById('qImage');
-            if(qs[n].image && qs[n].image.trim() !== "") { imgTag.src = qs[n].image; imgTag.style.display = "block"; } 
-            else { imgTag.style.display = "none"; }
+            
+            // تحسين معالجة رابط الصورة
+            if(qs[n].image && qs[n].image.trim() !== "") {
+                let finalImg = qs[n].image.trim();
+                if(finalImg.includes('ibb.co') && !finalImg.includes('i.ibb.co')) {
+                    finalImg = finalImg.replace('ibb.co', 'i.ibb.co') + '/image.png';
+                }
+                imgTag.src = finalImg; 
+                imgTag.style.display = "block";
+            } else {
+                imgTag.style.display = "none";
+            }
             
             timeLeft = 30; updateTimerUI();
             startTimer(() => showQ(n+1));
@@ -306,16 +293,35 @@
         document.getElementById('tabs-container').style.display = 'block';
     }
 
-    function retryQuiz() {
-        runQuiz(currentLab);
-    }
+    function retryQuiz() { runQuiz(currentLab); }
 
     function finish() {
         document.getElementById('quiz-area').style.display = 'none';
         document.getElementById('finalName').innerText = studentName;
         document.getElementById('finalLab').innerText = "مختبر: " + currentLab;
         document.getElementById('finalScore').innerText = score + " XP";
-        document.getElementById('resForm').src = `${FORM_BASE_URL}?${ENTRY_NAME}=${encodeURIComponent(studentName)}&${ENTRY_SCORE}=${score}`;
+
+        // --- عملية الإرسال التلقائي المخفي ---
+        const autoForm = document.createElement('form');
+        autoForm.method = 'POST';
+        autoForm.action = FORM_BASE_URL;
+        autoForm.target = 'hidden_iframe';
+
+        const nameInput = document.createElement('input');
+        nameInput.name = ENTRY_NAME;
+        nameInput.value = studentName;
+        autoForm.appendChild(nameInput);
+
+        const scoreInput = document.createElement('input');
+        scoreInput.name = ENTRY_SCORE;
+        scoreInput.value = score + " في مختبر " + currentLab;
+        autoForm.appendChild(scoreInput);
+
+        document.body.appendChild(autoForm);
+        autoForm.submit();
+        document.body.removeChild(autoForm);
+        // -----------------------------------
+
         document.getElementById('result-screen').style.display = 'block';
     }
 
@@ -334,6 +340,4 @@
     }
 </script>
 </body>
-
 </html>
-
