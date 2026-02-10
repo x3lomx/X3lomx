@@ -23,7 +23,7 @@
         .steam { position: fixed; bottom: -50px; background: rgba(255, 255, 255, 0.1); border-radius: 50%; filter: blur(20px); animation: rise 8s infinite ease-in; z-index: -1; }
         @keyframes rise { 0% { transform: translateY(0) scale(1); opacity: 0; } 50% { opacity: 0.3; } 100% { transform: translateY(-100vh) scale(3); opacity: 0; } }
 
-        /* الرجل الفضائي البرمجي (ضمان الظهور) */
+        /* الرجل الفضائي */
         .astro-css { position: absolute; width: 60px; height: 80px; top: 20%; right: 10%; animation: floatAstro 6s infinite ease-in-out; z-index: 2; }
         .astro-head { width: 30px; height: 30px; background: #fff; border-radius: 50%; position: relative; border: 2px solid #ddd; }
         .astro-visor { width: 20px; height: 10px; background: #333; border-radius: 4px; position: absolute; top: 8px; left: 5px; box-shadow: 0 0 10px var(--blue); }
@@ -41,11 +41,26 @@
         }
         @keyframes glowPulse { from { opacity: 0.8; transform: scale(1); } to { opacity: 1; transform: scale(1.05); text-shadow: 0 0 20px var(--purple), 0 0 40px var(--purple); } }
 
-        /* الكواكب */
+        /* نظام الكواكب الداخلية */
         .orbit { position: absolute; border: 1px solid rgba(255,255,255,0.05); border-radius: 50%; top: 50%; left: 50%; transform: translate(-50%, -50%); }
-        .planet { position: absolute; border-radius: 50%; top: -10px; left: 50%; }
-        .earth-orbit { width: 400px; height: 400px; animation: spin 20s linear infinite; }
-        .earth-css { width: 25px; height: 25px; background: #2271B3; box-shadow: 0 0 15px var(--blue); }
+        .planet { position: absolute; border-radius: 50%; top: -5px; left: 50%; transform: translateX(-50%); }
+        
+        /* عطارد */
+        .mercury-orbit { width: 150px; height: 150px; animation: spin 5s linear infinite; }
+        .mercury { width: 8px; height: 8px; background: #A5A5A5; }
+        
+        /* الزهرة */
+        .venus-orbit { width: 220px; height: 220px; animation: spin 8s linear infinite; }
+        .venus { width: 12px; height: 12px; background: #E3BB76; }
+        
+        /* الأرض */
+        .earth-orbit { width: 300px; height: 300px; animation: spin 12s linear infinite; }
+        .earth { width: 14px; height: 14px; background: #2271B3; box-shadow: 0 0 10px var(--blue); }
+        
+        /* المريخ */
+        .mars-orbit { width: 380px; height: 380px; animation: spin 15s linear infinite; }
+        .mars { width: 10px; height: 10px; background: #E27B58; }
+
         @keyframes spin { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg); } }
 
         .school-header { text-align: center; padding: 15px; background: rgba(0,0,0,0.7); backdrop-filter: blur(10px); border-bottom: 2px solid var(--blue); z-index: 10; }
@@ -73,12 +88,18 @@
         <div class="astro-head"><div class="astro-visor"></div></div>
         <div class="astro-body"></div>
     </div>
-    <div class="orbit earth-orbit"><div class="planet earth-css"></div></div>
+    <div class="orbit mercury-orbit"><div class="planet mercury"></div></div>
+    <div class="orbit venus-orbit"><div class="planet venus"></div></div>
+    <div class="orbit earth-orbit"><div class="planet earth"></div></div>
+    <div class="orbit mars-orbit"><div class="planet mars"></div></div>
 </div>
 
 <div class="school-header">
     <h2 id="ui-school-name" style="margin:0; color:var(--blue);">مدرسة ذات الصواري</h2>
-    <p style="margin:5px 0; font-size:0.8rem;">المعلم: <span id="ui-teacher-name" style="color:var(--green)">...</span></p>
+    <p style="margin:5px 0; font-size:0.9rem;">
+        المدير: <span id="ui-manager-name" style="color:var(--green)">...</span> | 
+        المعلم: <span id="ui-teacher-name" style="color:var(--green)">...</span>
+    </p>
 </div>
 
 <div class="main-wrapper">
@@ -137,8 +158,11 @@
     let allQuestions = [], studentName = "", score = 0, currentLab = "";
     let timeLeft = 30, timerInterval, labSettings = {}, studentAnswers = [];
 
+    // الأصوات
+    const soundCorrect = new Audio('https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3');
+    const soundWrong = new Audio('https://assets.mixkit.co/active_storage/sfx/2018/2018-preview.mp3');
+
     window.onload = () => {
-        // إنشاء النجوم والأبخرة
         const space = document.getElementById('space');
         for(let i=0; i<50; i++) {
             const s = document.createElement('div'); s.className = 'star';
@@ -161,6 +185,7 @@
             const d = res.data;
             if(d.length > 0) {
                 document.getElementById('ui-school-name').innerText = d[0]['المدرسة'] || "مدرسة ذات الصواري";
+                document.getElementById('ui-manager-name').innerText = d[0]['المدير'] || "أ. سهيل عقيلي";
                 document.getElementById('ui-teacher-name').innerText = d[0]['المعلم'] || "أ. ريان الاسمري";
             }
             allQuestions = d.filter(q => q['المختبر']).map(q => {
@@ -210,7 +235,7 @@
             div.onclick = () => {
                 clearInterval(timerInterval);
                 const isOk = (o === q.correct);
-                if(isOk) { div.classList.add('correct'); score++; } else { div.classList.add('wrong'); }
+                if(isOk) { div.classList.add('correct'); score++; soundCorrect.play(); } else { div.classList.add('wrong'); soundWrong.play(); }
                 studentAnswers.push({q: q.question, a: o, c: isOk});
                 setTimeout(() => loadQuestion(idx+1), 600);
             };
