@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة معمل العلوم | مدرسة ذات الصواري</title>
+    <title>منصة معمل العلوم التفاعلية</title>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -13,9 +13,8 @@
         :root { --blue: #00f3ff; --purple: #bc13fe; --bg: #05070a; --green: #39ff14; --pink: #ff0055; }
         body, html { height: 100%; margin: 0; padding: 0; background: var(--bg); color: #fff; font-family: 'Cairo', sans-serif; overflow-x: hidden; display: flex; flex-direction: column; }
         
+        /* الفضاء والكواكب */
         .space-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: radial-gradient(circle at center, #1b2735 0%, #05070a 100%); }
-        
-        /* الكواكب الخلفية */
         .orbit { position: absolute; border: 1px solid rgba(255,255,255,0.05); border-radius: 50%; top: 50%; left: 50%; transform: translate(-50%, -50%); }
         .planet { position: absolute; border-radius: 50%; top: -5px; left: 50%; transform: translateX(-50%); }
         .mercury-orbit { width: 150px; height: 150px; animation: spin 5s linear infinite; }
@@ -32,13 +31,13 @@
         .main-wrapper { flex: 1; display: flex; align-items: center; justify-content: center; z-index: 5; padding: 20px; }
         .card { background: rgba(0,0,0,0.6); backdrop-filter: blur(20px); padding: 30px; border-radius: 30px; border: 1px solid var(--blue); text-align: center; box-shadow: 0 0 40px rgba(0, 243, 255, 0.2); max-width: 500px; width: 100%; }
         
-        /* إعدادات صورة السؤال */
+        /* الصورة في المنتصف */
         .question-img { 
             max-width: 100%; 
             max-height: 200px; 
             border-radius: 15px; 
             border: 2px solid var(--purple); 
-            margin: 0 auto 15px auto; 
+            margin: 0 auto 20px auto; 
             display: none; 
             object-fit: contain;
         }
@@ -65,13 +64,13 @@
 </div>
 
 <div class="school-header">
-    <h2 id="ui-school-name">مدرسة ذات الصواري</h2>
-    <p>المدير: <span id="ui-manager-name" style="color:var(--green)">...</span> | المعلم: <span id="ui-teacher-name" style="color:var(--green)">...</span></p>
+    <h2 id="ui-school-name" style="margin:0; color:var(--blue);">جاري التحميل...</h2>
+    <p style="margin:5px 0;">المدير: <span id="ui-manager-name" style="color:var(--green)">...</span> | المعلم: <span id="ui-teacher-name" style="color:var(--green)">...</span></p>
 </div>
 
 <div class="main-wrapper">
     <div id="login-screen" class="card">
-        <h1 style="font-family:'Orbitron'; color:var(--blue);">SCIENCE LAB</h1>
+        <h1 style="font-family:'Orbitron'; color:var(--blue); text-shadow: 0 0 15px var(--blue);">SCIENCE LAB</h1>
         <input type="text" id="stdName" style="width:90%; padding:15px; border-radius:15px; border:2px solid var(--blue); background:#000; color:#fff; text-align:center; margin-bottom:20px;" placeholder="أدخل اسمك يا بطل">
         <br>
         <button class="btn" onclick="startApp()">دخول المختبر 🧪</button>
@@ -83,30 +82,29 @@
     </div>
 
     <div id="quiz-area" class="card">
-        <div style="display:flex; justify-content: space-between; margin-bottom: 10px;">
+        <div style="display:flex; justify-content: space-between; margin-bottom: 10px; font-family: 'Orbitron';">
             <span id="timerText" style="color:var(--pink)">30s</span>
             <span id="qCounter"></span>
         </div>
         <img id="qImage" class="question-img">
-        <h2 id="qText" style="margin-bottom:20px;"></h2>
+        <h2 id="qText" style="margin-bottom:20px; font-size: 1.2rem;"></h2>
         <div id="optionsContainer"></div>
     </div>
 
     <div id="result-screen" style="width:100%; max-width:500px;">
         <div id="photo-card" class="card">
-            <h2 style="color: var(--green);">🎉 أحسنت يا مستكشف 🎉</h2>
+            <h2 style="color: var(--green);">🎉 مهمة مكتملة 🎉</h2>
             <h3 id="finalName"></h3>
-            <div id="finalScore" style="font-size:3rem; color:var(--purple); margin:15px 0;"></div>
-            
+            <div id="finalScore" style="font-size:3.5rem; color:var(--purple); margin:15px 0; font-family: 'Orbitron';"></div>
             <div id="questions-report">
-                <h4 style="text-align:center; border-bottom:1px solid #333;">تقرير المهمة</h4>
+                <h4 style="text-align:center; border-bottom:1px solid #333; margin-bottom:10px;">تقرير المهمة العلمية</h4>
                 <div id="report-list"></div>
             </div>
         </div>
         
         <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:15px;">
             <button id="retryBtn" class="btn" style="background:orange;" onclick="retryQuiz()">🔄 إعادة</button>
-            <button class="btn" style="background:var(--green); color:#000;" onclick="sendResult()">📩 إرسال النتيجة</button>
+            <button class="btn" style="background:var(--green); color:#000;" onclick="sendResult()">📩 إرسال</button>
             <button class="btn" style="background:var(--blue); color:#000;" onclick="saveFullReport()">📸 حفظ التقرير</button>
             <button class="btn" style="background:none; border:1px solid #fff;" onclick="backToLabs()">🏠 المختبرات</button>
         </div>
@@ -129,6 +127,8 @@
         Papa.parse(SHEET_CSV, { download: true, header: true, complete: (res) => {
             const d = res.data;
             if(d.length > 0) {
+                // ربط اسم المدرسة والمدير والمعلم من جدول البيانات مباشرة
+                document.getElementById('ui-school-name').innerText = d[0]['المدرسة'] || "مدرسة ذات الصواري";
                 document.getElementById('ui-manager-name').innerText = d[0]['المدير'] || "أ. سهيل عقيلي";
                 document.getElementById('ui-teacher-name').innerText = d[0]['المعلم'] || "أ. ريان الاسمري";
             }
@@ -140,7 +140,7 @@
                     question: q['السؤال'], 
                     correct: q['الإجابة الصحيحة'], 
                     wrong: q['إجابة خاطئة'],
-                    image: q['رابط الصورة'] // قراءة الرابط من العمود الصحيح
+                    image: q['رابط الصورة'] 
                 };
             });
             renderLabs();
@@ -177,7 +177,6 @@
         document.getElementById('qCounter').innerText = `${idx+1} / ${qs.length}`;
         document.getElementById('qText').innerText = q.question;
         
-        // معالجة صورة السؤال
         const imgElement = document.getElementById('qImage');
         if(q.image && q.image.trim() !== "") {
             imgElement.src = q.image.trim();
@@ -208,30 +207,25 @@
         document.getElementById('finalName').innerText = studentName;
         document.getElementById('finalScore').innerText = score + " XP";
         
+        // إخفاء زر الإعادة إذا كان اسم التبويب مكتوباً في خانة الإعادة
         document.getElementById('retryBtn').style.display = (labRetryConfig[currentLab] === currentLab) ? "none" : "inline-flex";
 
-        // بناء تقرير الإجابات داخل الشاشة
         const list = document.getElementById('report-list');
         list.innerHTML = "";
         studentAnswers.forEach((ans, i) => {
-            list.innerHTML += `<div style="padding:5px; border-bottom:1px solid #eee;"><b>س${i+1}:</b> ${ans.c?'✅':'❌'} ${ans.a}</div>`;
+            list.innerHTML += `<div style="padding:8px; border-bottom:1px solid #eee; color:#000;"><b>س${i+1}:</b> ${ans.c?'✅':'❌'} ${ans.a}</div>`;
         });
     }
 
-    // وظيفة حفظ التقرير كصورة
     function saveFullReport() {
         const report = document.getElementById('questions-report');
-        report.style.display = "block"; // إظهاره مؤقتاً للتصوير
-        
-        html2canvas(document.getElementById('photo-card'), {
-            backgroundColor: '#05070a',
-            useCORS: true
-        }).then(canvas => {
+        report.style.display = "block";
+        html2canvas(document.getElementById('photo-card'), { backgroundColor: '#05070a', useCORS: true }).then(canvas => {
             const link = document.createElement('a');
-            link.download = `تقرير_${studentName}_${currentLab}.png`;
+            link.download = `تقرير_${studentName}.png`;
             link.href = canvas.toDataURL();
             link.click();
-            report.style.display = "none"; // إخفاؤه بعد التصوير
+            report.style.display = "none";
         });
     }
 
@@ -240,7 +234,7 @@
         formData.append('entry.851707482', studentName);
         formData.append('entry.1149023992', `${score} XP في ${currentLab}`);
         await fetch(FORM_URL, { method: 'POST', mode: 'no-cors', body: formData });
-        alert("تم إرسال النتيجة بنجاح! ✅");
+        alert("تم الإرسال بنجاح! ✅");
     }
 
     function backToLabs() { document.getElementById('result-screen').style.display = 'none'; document.getElementById('tabs-container').style.display = 'block'; }
