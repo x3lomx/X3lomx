@@ -31,25 +31,6 @@
 
         @keyframes twinkle { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
 
-        #login-screen {
-            position: relative; overflow: hidden;
-            border: 2px solid var(--blue);
-            box-shadow: 0 0 20px rgba(0, 243, 255, 0.3), inset 0 0 15px rgba(0, 243, 255, 0.2);
-            animation: borderGlow 4s infinite alternate;
-        }
-
-        @keyframes borderGlow {
-            from { border-color: var(--blue); box-shadow: 0 0 20px rgba(0, 243, 255, 0.3); }
-            to { border-color: var(--purple); box-shadow: 0 0 30px rgba(188, 19, 254, 0.4); }
-        }
-
-        .cyber-btn {
-            position: relative; background: transparent !important;
-            border: 2px solid var(--blue) !important; color: var(--blue) !important;
-            overflow: hidden; z-index: 1;
-        }
-        .cyber-btn:hover { background: var(--blue) !important; color: #000 !important; box-shadow: 0 0 40px var(--blue); }
-
         .school-header { 
             text-align: center; padding: 30px 20px;
             background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(5px);
@@ -69,13 +50,13 @@
             text-align: center;
         }
 
-        /* تعديل توسيط الصورة */
+        /* توسيط الصورة */
         .question-img { 
             max-width: 100%; 
             max-height: 220px; 
             border-radius: 12px; 
-            margin: 0 auto 15px auto; /* التوسيط باستخدام margin auto */
-            display: block; /* جعلها كتلة لتطبيق التوسيط */
+            margin: 0 auto 15px auto; 
+            display: block; 
             border: 2px solid var(--purple); 
         }
 
@@ -100,9 +81,7 @@
         .timer-bar { height: 100%; background: linear-gradient(90deg, var(--purple), var(--blue)); width: 100%; transition: 1s linear; }
 
         #result-screen, #quiz-area { display: none; }
-        
         .send-status { background: rgba(57, 255, 20, 0.1); color: var(--green); padding: 15px; border-radius: 15px; margin: 20px 0; border: 1px solid var(--green); }
-
         .action-buttons { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 15px; }
     </style>
 </head>
@@ -111,7 +90,7 @@
 <div class="space-bg" id="space"></div>
 
 <div class="school-header">
-    <h1 id="ui-school-name">جاري تحميل اسم المدرسة...</h1>
+    <h1 id="ui-school-name">مدرسة ذات الصواري المتوسطة</h1>
     <div style="font-size: 0.9rem; margin-top:8px;">
         <span>المدير: <span class="highlight" id="ui-manager-name">...</span></span> | 
         <span>المعلم: <span class="highlight" id="ui-teacher-name">...</span></span>
@@ -125,7 +104,7 @@
             <h2 style="color: var(--blue); margin-bottom: 25px;">مختبر العلوم الافتراضي</h2>
             <input type="text" id="stdName" placeholder="أدخل اسمك الثلاثي">
             <br>
-            <button class="btn cyber-btn" onclick="startApp()">تشغيل المحركات والدخول 🚀</button>
+            <button class="btn" style="border: 2px solid var(--blue); background: transparent; color: var(--blue);" onclick="startApp()">تشغيل المحركات والدخول 🚀</button>
         </div>
 
         <div id="tabs-container" style="display:none; text-align:center;">
@@ -160,7 +139,6 @@
 
             <div class="send-status">
                 <p style="font-weight:bold; margin:0;">✅ تم إرسال نتيجتك تلقائياً إلى المعلم</p>
-                <p style="font-size: 0.8rem; margin: 5px 0 0 0; opacity: 0.8;">لا حاجة للضغط على أي زر إضافي.</p>
             </div>
 
             <div class="action-buttons">
@@ -183,7 +161,11 @@
 
     let allQuestions = [], studentName = "", score = 0, currentLab = "";
     let timeLeft = 30, timerInterval;
-    let teacherPhone = ""; // سيتم سحبه من الجدول مستقبلاً إذا رغبت
+    let teacherPhone = "966533347331"; // الرقم الافتراضي
+
+    // تعريف الأصوات
+    const soundCorrect = new Audio('https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3');
+    const soundWrong = new Audio('https://assets.mixkit.co/active_storage/sfx/2018/2018-preview.mp3');
 
     function createSpace() {
         const space = document.getElementById('space');
@@ -191,7 +173,6 @@
             const star = document.createElement('div');
             star.className = 'star';
             star.style.width = Math.random() * 2 + 'px';
-            star.style.height = star.style.width;
             star.style.left = Math.random() * 100 + '%';
             star.style.top = Math.random() * 100 + '%';
             star.style.setProperty('--duration', Math.random() * 3 + 2 + 's');
@@ -200,7 +181,6 @@
     }
     createSpace();
 
-    // جلب البيانات عند فتح الصفحة
     window.onload = fetchQuestions;
 
     function fetchQuestions() {
@@ -208,11 +188,15 @@
             download: true, header: true, 
             complete: (res) => { 
                 const data = res.data;
-                // تحديث بيانات المدرسة من أول صف متوفر
                 if(data.length > 0) {
                     document.getElementById('ui-school-name').innerText = data[0]['المدرسة'] || "مدرسة ذات الصواري";
                     document.getElementById('ui-manager-name').innerText = data[0]['المدير'] || "أ. سهيل عقيلي";
                     document.getElementById('ui-teacher-name').innerText = data[0]['المعلم'] || "أ. ريان الاسمري";
+                    if(data[0]['رقم الهاتف']) {
+                        let phone = data[0]['رقم الهاتف'].toString().trim();
+                        if(phone.startsWith('05')) phone = '966' + phone.substring(1);
+                        teacherPhone = phone;
+                    }
                 }
 
                 allQuestions = data.map(q => ({
@@ -257,11 +241,7 @@
             const imgTag = document.getElementById('qImage');
             
             if(qs[n].image && qs[n].image.trim() !== "") {
-                let finalImg = qs[n].image.trim();
-                if(finalImg.includes('ibb.co') && !finalImg.includes('i.ibb.co')) {
-                    finalImg = finalImg.replace('ibb.co', 'i.ibb.co') + '/image.png';
-                }
-                imgTag.src = finalImg; 
+                imgTag.src = qs[n].image.trim(); 
                 imgTag.style.display = "block";
             } else {
                 imgTag.style.display = "none";
@@ -277,8 +257,13 @@
                 b.className = 'option'; b.innerText = opt;
                 b.onclick = () => {
                     clearInterval(timerInterval);
-                    if(opt === qs[n].correct) { b.classList.add('correct'); score += 1; } 
-                    else { b.classList.add('wrong'); }
+                    if(opt === qs[n].correct) { 
+                        b.classList.add('correct'); score += 1; 
+                        soundCorrect.play(); // تشغيل صوت الإجابة الصحيحة
+                    } else { 
+                        b.classList.add('wrong'); 
+                        soundWrong.play(); // تشغيل صوت الإجابة الخاطئة
+                    }
                     setTimeout(()=>showQ(n+1), 800);
                 };
                 optDiv.appendChild(b);
@@ -299,15 +284,6 @@
         document.getElementById('timerBar').style.width = (timeLeft / 30) * 100 + "%";
     }
 
-    function backToLabs() {
-        clearInterval(timerInterval);
-        document.getElementById('quiz-area').style.display = 'none';
-        document.getElementById('result-screen').style.display = 'none';
-        document.getElementById('tabs-container').style.display = 'block';
-    }
-
-    function retryQuiz() { runQuiz(currentLab); }
-
     function finish() {
         document.getElementById('quiz-area').style.display = 'none';
         document.getElementById('finalName').innerText = studentName;
@@ -319,15 +295,10 @@
         autoForm.action = FORM_BASE_URL;
         autoForm.target = 'hidden_iframe';
 
-        const nameInput = document.createElement('input');
-        nameInput.name = ENTRY_NAME;
-        nameInput.value = studentName;
-        autoForm.appendChild(nameInput);
-
-        const scoreInput = document.createElement('input');
-        scoreInput.name = ENTRY_SCORE;
-        scoreInput.value = score + " في مختبر " + currentLab;
-        autoForm.appendChild(scoreInput);
+        const nInput = document.createElement('input'); nInput.name = ENTRY_NAME; nInput.value = studentName;
+        autoForm.appendChild(nInput);
+        const sInput = document.createElement('input'); sInput.name = ENTRY_SCORE; sInput.value = score + " في " + currentLab;
+        autoForm.appendChild(sInput);
 
         document.body.appendChild(autoForm);
         autoForm.submit();
@@ -347,9 +318,18 @@
 
     function goToWhatsApp() {
         const teacherName = document.getElementById('ui-teacher-name').innerText;
-        const msg = `أستاذ ${teacherName}، الطالب (${studentName}) حقق ${score} في مختبر (${currentLab})`;
-        window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`);
+        const msg = `أستاذ ${teacherName}، الطالب (${studentName}) حقق درجة ${score} في مختبر (${currentLab})`;
+        window.open(`https://wa.me/${teacherPhone}?text=${encodeURIComponent(msg)}`);
     }
+
+    function backToLabs() {
+        clearInterval(timerInterval);
+        document.getElementById('quiz-area').style.display = 'none';
+        document.getElementById('result-screen').style.display = 'none';
+        document.getElementById('tabs-container').style.display = 'block';
+    }
+
+    function retryQuiz() { runQuiz(currentLab); }
 </script>
 </body>
 </html>
