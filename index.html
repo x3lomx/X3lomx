@@ -13,40 +13,25 @@
         :root { --blue: #00f3ff; --purple: #bc13fe; --bg: #05070a; --green: #39ff14; --pink: #ff0055; }
         body, html { height: 100%; margin: 0; padding: 0; background: var(--bg); color: #fff; font-family: 'Cairo', sans-serif; overflow-x: hidden; display: flex; flex-direction: column; }
         
-        /* الفضاء والكواكب */
         .space-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: radial-gradient(circle at center, #1b2735 0%, #05070a 100%); }
         .orbit { position: absolute; border: 1px solid rgba(255,255,255,0.05); border-radius: 50%; top: 50%; left: 50%; transform: translate(-50%, -50%); }
         .planet { position: absolute; border-radius: 50%; top: -5px; left: 50%; transform: translateX(-50%); }
-        .mercury-orbit { width: 150px; height: 150px; animation: spin 5s linear infinite; }
-        .mercury { width: 8px; height: 8px; background: #A5A5A5; }
-        .venus-orbit { width: 220px; height: 220px; animation: spin 8s linear infinite; }
-        .venus { width: 12px; height: 12px; background: #E3BB76; }
         .earth-orbit { width: 300px; height: 300px; animation: spin 12s linear infinite; }
         .earth { width: 14px; height: 14px; background: #2271B3; box-shadow: 0 0 10px var(--blue); }
-        .mars-orbit { width: 380px; height: 380px; animation: spin 15s linear infinite; }
-        .mars { width: 10px; height: 10px; background: #E27B58; }
         @keyframes spin { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg); } }
 
         .school-header { text-align: center; padding: 15px; background: rgba(0,0,0,0.7); backdrop-filter: blur(10px); border-bottom: 2px solid var(--blue); z-index: 10; }
         .main-wrapper { flex: 1; display: flex; align-items: center; justify-content: center; z-index: 5; padding: 20px; }
         .card { background: rgba(0,0,0,0.6); backdrop-filter: blur(20px); padding: 30px; border-radius: 30px; border: 1px solid var(--blue); text-align: center; box-shadow: 0 0 40px rgba(0, 243, 255, 0.2); max-width: 500px; width: 100%; }
         
-        /* الصورة في المنتصف */
-        .question-img { 
-            max-width: 100%; 
-            max-height: 200px; 
-            border-radius: 15px; 
-            border: 2px solid var(--purple); 
-            margin: 0 auto 20px auto; 
-            display: none; 
-            object-fit: contain;
-        }
+        .question-img { max-width: 100%; max-height: 200px; border-radius: 15px; border: 2px solid var(--purple); margin: 0 auto 20px auto; display: none; object-fit: contain; }
 
         .btn { background: var(--purple); color: #fff; border: none; padding: 12px 25px; border-radius: 12px; cursor: pointer; font-weight: bold; transition: 0.3s; font-size: 1rem; }
-        .btn:hover { background: var(--blue); color: #000; transform: translateY(-3px); }
-        
-        .option { background: rgba(255,255,255,0.1); padding: 15px; margin: 10px 0; border-radius: 15px; cursor: pointer; text-align: right; border: 1px solid transparent; }
-        .option:hover { background: rgba(0, 243, 255, 0.2); border-color: var(--blue); }
+        .btn-send { background: var(--green); color: #000; font-size: 1.3rem; padding: 15px; grid-column: span 2; }
+        .btn-small { font-size: 0.8rem; padding: 8px 15px; background: rgba(255,255,255,0.1); border: 1px solid #777; }
+        .btn-whatsapp { background: #25D366; color: white; font-size: 0.9rem; }
+
+        .option { background: rgba(255,255,255,0.1); padding: 15px; margin: 10px 0; border-radius: 15px; cursor: pointer; text-align: right; }
         .correct { background: var(--green) !important; color: #000; }
         .wrong { background: var(--pink) !important; }
         
@@ -57,10 +42,7 @@
 <body>
 
 <div class="space-bg">
-    <div class="orbit mercury-orbit"><div class="planet mercury"></div></div>
-    <div class="orbit venus-orbit"><div class="planet venus"></div></div>
     <div class="orbit earth-orbit"><div class="planet earth"></div></div>
-    <div class="orbit mars-orbit"><div class="planet mars"></div></div>
 </div>
 
 <div class="school-header">
@@ -70,9 +52,9 @@
 
 <div class="main-wrapper">
     <div id="login-screen" class="card">
-        <h1 style="font-family:'Orbitron'; color:var(--blue); text-shadow: 0 0 15px var(--blue);">SCIENCE LAB</h1>
-        <input type="text" id="stdName" style="width:90%; padding:15px; border-radius:15px; border:2px solid var(--blue); background:#000; color:#fff; text-align:center; margin-bottom:20px;" placeholder="أدخل اسمك يا بطل">
-        <br>
+        <h1 style="font-family:'Orbitron'; color:var(--blue);">SCIENCE LAB</h1>
+        <input type="text" id="stdName" style="width:90%; padding:15px; border-radius:15px; border:2px solid var(--blue); background:#000; color:#fff; text-align:center;" placeholder="أدخل اسمك يا بطل">
+        <br><br>
         <button class="btn" onclick="startApp()">دخول المختبر 🧪</button>
     </div>
 
@@ -82,31 +64,33 @@
     </div>
 
     <div id="quiz-area" class="card">
-        <div style="display:flex; justify-content: space-between; margin-bottom: 10px; font-family: 'Orbitron';">
+        <div style="display:flex; justify-content: space-between; margin-bottom: 10px;">
             <span id="timerText" style="color:var(--pink)">30s</span>
             <span id="qCounter"></span>
         </div>
         <img id="qImage" class="question-img">
-        <h2 id="qText" style="margin-bottom:20px; font-size: 1.2rem;"></h2>
+        <h2 id="qText" style="margin-bottom:20px;"></h2>
         <div id="optionsContainer"></div>
     </div>
 
     <div id="result-screen" style="width:100%; max-width:500px;">
         <div id="photo-card" class="card">
-            <h2 style="color: var(--green);">🎉 مهمة مكتملة 🎉</h2>
+            <h2 style="color: var(--green);">🎉 اكتملت المهمة 🎉</h2>
             <h3 id="finalName"></h3>
-            <div id="finalScore" style="font-size:3.5rem; color:var(--purple); margin:15px 0; font-family: 'Orbitron';"></div>
+            <div id="finalScore" style="font-size:3rem; color:var(--purple); margin:15px 0;"></div>
             <div id="questions-report">
-                <h4 style="text-align:center; border-bottom:1px solid #333; margin-bottom:10px;">تقرير المهمة العلمية</h4>
+                <h4 style="text-align:center; border-bottom:1px solid #333;">تقرير المهمة</h4>
                 <div id="report-list"></div>
             </div>
         </div>
         
         <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:15px;">
-            <button id="retryBtn" class="btn" style="background:orange;" onclick="retryQuiz()">🔄 إعادة</button>
-            <button class="btn" style="background:var(--green); color:#000;" onclick="sendResult()">📩 إرسال</button>
-            <button class="btn" style="background:var(--blue); color:#000;" onclick="saveFullReport()">📸 حفظ التقرير</button>
-            <button class="btn" style="background:none; border:1px solid #fff;" onclick="backToLabs()">🏠 المختبرات</button>
+            <button class="btn btn-send" onclick="sendResult()">📩 إرسال النتيجة فوراً</button>
+            
+            <button id="retryBtn" class="btn btn-small" onclick="retryQuiz()">🔄 إعادة</button>
+            <button class="btn btn-small" onclick="backToLabs()">🏠 المختبرات</button>
+            <button class="btn btn-small" onclick="saveFullReport()">📸 حفظ التقرير</button>
+            <button class="btn btn-small btn-whatsapp" onclick="sendWhatsApp()">💬 واتساب المعلم</button>
         </div>
     </div>
 </div>
@@ -115,11 +99,8 @@
     const SHEET_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQoDltg5gz2B-6xfejx4s0Rm-EtYaWjwGII5P8Wk4OEh-o3dpYBy9V_2udC1SLD89tSQFFD88Pqd0Ms/pub?gid=0&single=true&output=csv';
     const FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSd6qV0wUZIOTA3maN-KuBBhzivjeF0lCYD37-Ecr4FErVu6Xw/formResponse';
     
-    let allQuestions = [], studentName = "", score = 0, currentLab = "";
+    let allQuestions = [], studentName = "", score = 0, currentLab = "", teacherPhone = "";
     let labRetryConfig = {}, studentAnswers = [];
-
-    const soundCorrect = new Audio('https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3');
-    const soundWrong = new Audio('https://assets.mixkit.co/active_storage/sfx/2018/2018-preview.mp3');
 
     window.onload = fetchData;
 
@@ -127,21 +108,15 @@
         Papa.parse(SHEET_CSV, { download: true, header: true, complete: (res) => {
             const d = res.data;
             if(d.length > 0) {
-                // ربط اسم المدرسة والمدير والمعلم من جدول البيانات مباشرة
                 document.getElementById('ui-school-name').innerText = d[0]['المدرسة'] || "مدرسة ذات الصواري";
                 document.getElementById('ui-manager-name').innerText = d[0]['المدير'] || "أ. سهيل عقيلي";
                 document.getElementById('ui-teacher-name').innerText = d[0]['المعلم'] || "أ. ريان الاسمري";
+                teacherPhone = d[0]['الهاتف'] || ""; // جلب رقم الهاتف من الجدول
             }
             allQuestions = d.filter(q => q['المختبر']).map(q => {
                 const labName = q['المختبر'].trim();
                 labRetryConfig[labName] = q['إعادة'] ? q['إعادة'].trim() : "";
-                return { 
-                    lab: labName, 
-                    question: q['السؤال'], 
-                    correct: q['الإجابة الصحيحة'], 
-                    wrong: q['إجابة خاطئة'],
-                    image: q['رابط الصورة'] 
-                };
+                return { lab: labName, question: q['السؤال'], correct: q['الإجابة الصحيحة'], wrong: q['إجابة خاطئة'], image: q['رابط الصورة'] };
             });
             renderLabs();
         }});
@@ -172,30 +147,21 @@
     function loadQuestion(idx) {
         const qs = allQuestions.filter(q => q.lab === currentLab);
         if(idx >= qs.length) return showResult();
-        
         const q = qs[idx];
         document.getElementById('qCounter').innerText = `${idx+1} / ${qs.length}`;
         document.getElementById('qText').innerText = q.question;
-        
         const imgElement = document.getElementById('qImage');
-        if(q.image && q.image.trim() !== "") {
-            imgElement.src = q.image.trim();
-            imgElement.style.display = "block";
-        } else {
-            imgElement.style.display = "none";
-        }
+        if(q.image) { imgElement.src = q.image; imgElement.style.display = "block"; } else { imgElement.style.display = "none"; }
         
         const opts = [q.correct, q.wrong].sort(() => Math.random() - 0.5);
         const container = document.getElementById('optionsContainer'); container.innerHTML = "";
-        
         opts.forEach(o => {
             const div = document.createElement('div'); div.className = 'option'; div.innerText = o;
             div.onclick = () => {
                 const isCorrect = (o === q.correct);
-                if(isCorrect) { div.classList.add('correct'); score++; soundCorrect.play(); } 
-                else { div.classList.add('wrong'); soundWrong.play(); }
+                if(isCorrect) score++;
                 studentAnswers.push({q: q.question, a: o, c: isCorrect});
-                setTimeout(() => loadQuestion(idx+1), 600);
+                loadQuestion(idx+1);
             };
             container.appendChild(div);
         });
@@ -206,15 +172,18 @@
         document.getElementById('result-screen').style.display = 'block';
         document.getElementById('finalName').innerText = studentName;
         document.getElementById('finalScore').innerText = score + " XP";
-        
-        // إخفاء زر الإعادة إذا كان اسم التبويب مكتوباً في خانة الإعادة
         document.getElementById('retryBtn').style.display = (labRetryConfig[currentLab] === currentLab) ? "none" : "inline-flex";
 
-        const list = document.getElementById('report-list');
-        list.innerHTML = "";
+        const list = document.getElementById('report-list'); list.innerHTML = "";
         studentAnswers.forEach((ans, i) => {
-            list.innerHTML += `<div style="padding:8px; border-bottom:1px solid #eee; color:#000;"><b>س${i+1}:</b> ${ans.c?'✅':'❌'} ${ans.a}</div>`;
+            list.innerHTML += `<div style="padding:5px; border-bottom:1px solid #eee; color:#000;"><b>س${i+1}:</b> ${ans.c?'✅':'❌'}</div>`;
         });
+    }
+
+    function sendWhatsApp() {
+        if(!teacherPhone) return alert("رقم المعلم غير مسجل!");
+        const text = `أهلاً يا أستاذ، أنا الطالب: ${studentName}. لقد انتهيت من مختبر: ${currentLab} وحصلت على: ${score} XP. سأرسل لك صورة التقرير الآن.`;
+        window.open(`https://wa.me/${teacherPhone}?text=${encodeURIComponent(text)}`, '_blank');
     }
 
     function saveFullReport() {
