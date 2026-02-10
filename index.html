@@ -13,7 +13,6 @@
         :root { --blue: #00f3ff; --purple: #bc13fe; --bg: #05070a; --green: #39ff14; --pink: #ff0055; }
         body, html { height: 100%; margin: 0; padding: 0; background: var(--bg); color: #fff; font-family: 'Cairo', sans-serif; overflow-x: hidden; display: flex; flex-direction: column; }
         
-        /* الفضاء والكواكب */
         .space-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: radial-gradient(circle at center, #1b2735 0%, #05070a 100%); }
         .orbit { position: absolute; border: 1px solid rgba(255,255,255,0.05); border-radius: 50%; top: 50%; left: 50%; transform: translate(-50%, -50%); }
         .planet { position: absolute; border-radius: 50%; top: -5px; left: 50%; transform: translateX(-50%); }
@@ -22,29 +21,28 @@
         @keyframes spin { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg); } }
 
         .school-header { text-align: center; padding: 15px; background: rgba(0,0,0,0.7); backdrop-filter: blur(10px); border-bottom: 2px solid var(--blue); z-index: 10; }
-        
-        /* إضاءة العناوين */
-        .glowing-title { font-family: 'Orbitron', sans-serif; color: #fff; text-shadow: 0 0 10px var(--blue), 0 0 20px var(--blue); animation: pulse 2s infinite alternate; }
-        @keyframes pulse { from { opacity: 0.8; transform: scale(1); } to { opacity: 1; transform: scale(1.02); } }
+        .glowing-title { font-family: 'Orbitron', sans-serif; text-shadow: 0 0 10px var(--blue), 0 0 20px var(--blue); }
 
         .main-wrapper { flex: 1; display: flex; align-items: center; justify-content: center; z-index: 5; padding: 20px; }
-        .card { background: rgba(0,0,0,0.6); backdrop-filter: blur(20px); padding: 30px; border-radius: 30px; border: 1px solid var(--blue); text-align: center; box-shadow: 0 0 40px rgba(0, 243, 255, 0.2); max-width: 500px; width: 100%; }
+        .card { background: rgba(0,0,0,0.6); backdrop-filter: blur(20px); padding: 30px; border-radius: 30px; border: 1px solid var(--blue); text-align: center; box-shadow: 0 0 40px rgba(0, 243, 255, 0.2); max-width: 500px; width: 100%; position: relative; }
         
+        /* رمز الطفل برداء الفضاء */
+        .astronaut-icon { width: 80px; height: 80px; margin-bottom: 10px; filter: drop-shadow(0 0 10px var(--blue)); }
+
         .question-img { max-width: 100%; max-height: 180px; border-radius: 15px; border: 2px solid var(--purple); margin: 0 auto 15px auto; display: none; object-fit: contain; }
 
-        /* تنسيق الأزرار */
-        .btn { background: var(--purple); color: #fff; border: none; padding: 12px 25px; border-radius: 12px; cursor: pointer; font-weight: bold; transition: 0.3s; font-size: 1.1rem; border: 1px solid transparent; }
+        .btn { background: var(--purple); color: #fff; border: none; padding: 12px 25px; border-radius: 12px; cursor: pointer; font-weight: bold; transition: 0.3s; font-size: 1.1rem; }
         .btn:hover { background: var(--blue); color: #000; box-shadow: 0 0 15px var(--blue); }
         
-        /* تصغير الأزرار فقط في شاشة النهاية */
-        .btn-small { padding: 6px 12px; font-size: 0.85rem; border-radius: 8px; min-width: 80px; }
-        .btn-send-big { grid-column: span 2; padding: 15px; font-size: 1.3rem; background: var(--green); color: #000; box-shadow: 0 0 10px var(--green); }
-        .btn-wa { background: #25D366; }
+        /* أزرار مصغرة في النهاية */
+        .btn-small { padding: 8px 10px; font-size: 0.8rem; border-radius: 8px; background: rgba(255,255,255,0.1); border: 1px solid var(--blue); }
+        .btn-send-big { grid-column: span 2; padding: 18px; font-size: 1.4rem; background: var(--green); color: #000; box-shadow: 0 0 20px var(--green); }
+        .btn-wa { background: #25D366; color: #fff; border: none; }
 
-        .option { background: rgba(255,255,255,0.1); padding: 15px; margin: 10px 0; border-radius: 15px; cursor: pointer; text-align: right; border: 1px solid transparent; font-size: 1.1rem; }
-        .option:hover { border-color: var(--blue); background: rgba(0, 243, 255, 0.1); }
-        .correct { background: var(--green) !important; color: #000; font-weight: bold; }
-        .wrong { background: var(--pink) !important; color: #fff; }
+        /* ألوان الإجابات */
+        .option { background: rgba(255,255,255,0.1); padding: 15px; margin: 10px 0; border-radius: 15px; cursor: pointer; text-align: right; transition: 0.2s; border: 1px solid transparent; font-size: 1.1rem; }
+        .correct { background: var(--green) !important; color: #000 !important; border-color: #fff !important; font-weight: bold; }
+        .wrong { background: var(--pink) !important; color: #fff !important; border-color: #fff !important; }
         
         #questions-report { background: #fff; color: #000; border-radius: 15px; margin-top: 20px; padding: 15px; text-align: right; display: none; }
         #quiz-area, #tabs-container, #result-screen { display: none; }
@@ -63,14 +61,15 @@
 
 <div class="main-wrapper">
     <div id="login-screen" class="card">
-        <h1 class="glowing-title" style="font-size: 2.5rem;">SCIENCE LAB</h1>
+        <img src="https://cdn-icons-png.flaticon.com/512/2026/2026521.png" class="astronaut-icon" alt="Astronaut">
+        <h1 class="glowing-title">SCIENCE LAB</h1>
         <input type="text" id="stdName" style="width:90%; padding:15px; border-radius:15px; border:2px solid var(--blue); background:#000; color:#fff; text-align:center; font-size: 1.2rem;" placeholder="أدخل اسمك يا بطل">
         <br><br>
-        <button class="btn" onclick="startApp()">دخول المختبر 🧪</button>
+        <button class="btn" onclick="startApp()">انطلاق نحو المختبر 🚀</button>
     </div>
 
     <div id="tabs-container" class="card">
-        <h3 style="color: var(--blue);">اختر المختبر الاستكشافي:</h3>
+        <h3 style="color: var(--blue);">اختر وجهتك الاستكشافية:</h3>
         <div id="tabs" style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;"></div>
     </div>
 
@@ -86,18 +85,18 @@
 
     <div id="result-screen" style="width:100%; max-width:500px;">
         <div id="photo-card" class="card">
-            <h2 style="color: var(--green);" class="glowing-title">🎉 أحسنت يا مستكشف 🎉</h2>
-            <h3 id="finalName" style="font-size: 1.5rem; margin: 10px 0;"></h3>
-            <div id="finalScore" style="font-size:3.5rem; color:var(--purple); margin:15px 0; font-family: 'Orbitron';"></div>
+            <img src="https://cdn-icons-png.flaticon.com/512/2026/2026521.png" class="astronaut-icon" style="width:60px; height:60px;">
+            <h2 style="color: var(--green);" class="glowing-title">تمت المهمة بنجاح</h2>
+            <h3 id="finalName" style="font-size: 1.4rem;"></h3>
+            <div id="finalScore" style="font-size:3.5rem; color:var(--purple); margin:10px 0; font-family: 'Orbitron';"></div>
             <div id="questions-report">
-                <h4 style="text-align:center; border-bottom:1px solid #333; padding-bottom: 5px;">تقرير المهمة</h4>
+                <h4 style="text-align:center; border-bottom:1px solid #333; padding-bottom: 5px;">سجل الإنجاز</h4>
                 <div id="report-list"></div>
             </div>
         </div>
         
         <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px; margin-top:15px;">
-            <button class="btn btn-send-big" onclick="sendResult()">📩 إرسال النتيجة</button>
-            
+            <button class="btn btn-send-big" onclick="sendResult()">📩 إرسال النتيجة للمعلم</button>
             <button id="retryBtn" class="btn btn-small" onclick="retryQuiz()">🔄 إعادة</button>
             <button class="btn btn-small" onclick="backToLabs()">🏠 المختبرات</button>
             <button class="btn btn-small" onclick="saveFullReport()">📸 حفظ التقرير</button>
@@ -113,7 +112,6 @@
     let allQuestions = [], studentName = "", score = 0, currentLab = "", teacherPhone = "";
     let labRetryConfig = {}, studentAnswers = [];
 
-    // تعريف الأصوات
     const soundCorrect = new Audio('https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3');
     const soundWrong = new Audio('https://assets.mixkit.co/active_storage/sfx/2018/2018-preview.mp3');
 
@@ -129,9 +127,9 @@
                 teacherPhone = d[0]['الهاتف'] || "";
             }
             allQuestions = d.filter(q => q['المختبر']).map(q => {
-                const labName = q['المختبر'].trim();
-                labRetryConfig[labName] = q['إعادة'] ? q['إعادة'].trim() : "";
-                return { lab: labName, question: q['السؤال'], correct: q['الإجابة الصحيحة'], wrong: q['إجابة خاطئة'], image: q['رابط الصورة'] };
+                const ln = q['المختبر'].trim();
+                labRetryConfig[ln] = q['إعادة'] ? q['إعادة'].trim() : "";
+                return { lab: ln, question: q['السؤال'], correct: q['الإجابة الصحيحة'], wrong: q['إجابة خاطئة'], image: q['رابط الصورة'] };
             });
             renderLabs();
         }});
@@ -147,7 +145,7 @@
 
     function startApp() {
         studentName = document.getElementById('stdName').value;
-        if(!studentName) return alert("سجل اسمك يا بطل!");
+        if(!studentName) return alert("أدخل اسمك يا بطل!");
         document.getElementById('login-screen').style.display = 'none';
         document.getElementById('tabs-container').style.display = 'block';
     }
@@ -165,13 +163,8 @@
         const q = qs[idx];
         document.getElementById('qCounter').innerText = `${idx+1} / ${qs.length}`;
         document.getElementById('qText').innerText = q.question;
-        
-        const imgElement = document.getElementById('qImage');
-        if(q.image && q.image.trim() !== "") { 
-            imgElement.src = q.image; imgElement.style.display = "block"; 
-        } else { 
-            imgElement.style.display = "none"; 
-        }
+        const img = document.getElementById('qImage');
+        if(q.image && q.image.trim() !== "") { img.src = q.image; img.style.display = "block"; } else { img.style.display = "none"; }
         
         const opts = [q.correct, q.wrong].sort(() => Math.random() - 0.5);
         const container = document.getElementById('optionsContainer'); container.innerHTML = "";
@@ -179,7 +172,8 @@
             const div = document.createElement('div'); div.className = 'option'; div.innerText = o;
             div.onclick = () => {
                 const isCorrect = (o === q.correct);
-                if(isCorrect) { score++; soundCorrect.play(); } else { soundWrong.play(); }
+                if(isCorrect) { div.classList.add('correct'); score++; soundCorrect.play(); } 
+                else { div.classList.add('wrong'); soundWrong.play(); }
                 studentAnswers.push({q: q.question, a: o, c: isCorrect});
                 setTimeout(() => loadQuestion(idx+1), 600);
             };
@@ -193,16 +187,15 @@
         document.getElementById('finalName').innerText = studentName;
         document.getElementById('finalScore').innerText = score + " XP";
         document.getElementById('retryBtn').style.display = (labRetryConfig[currentLab] === currentLab) ? "none" : "inline-flex";
-
         const list = document.getElementById('report-list'); list.innerHTML = "";
         studentAnswers.forEach((ans, i) => {
-            list.innerHTML += `<div style="padding:5px; border-bottom:1px solid #eee; color:#000; font-size:0.9rem;"><b>س${i+1}:</b> ${ans.c?'✅':'❌'}</div>`;
+            list.innerHTML += `<div style="padding:5px; border-bottom:1px solid #eee; color:#000; font-size:0.85rem;"><b>س${i+1}:</b> ${ans.c?'✅':'❌'}</div>`;
         });
     }
 
     function sendWhatsApp() {
-        if(!teacherPhone) return alert("رقم المعلم غير متوفر!");
-        const msg = `أهلاً أستاذي، أنا ${studentName}. حصلت على ${score} XP في مختبر ${currentLab}.`;
+        if(!teacherPhone) return alert("رقم المعلم غير مسجل!");
+        const msg = `أهلاً أستاذي، أنا ${studentName}. أنهيت مختبر ${currentLab} بنتيجة ${score} XP.`;
         window.open(`https://wa.me/${teacherPhone}?text=${encodeURIComponent(msg)}`, '_blank');
     }
 
@@ -223,7 +216,7 @@
         formData.append('entry.851707482', studentName);
         formData.append('entry.1149023992', `${score} XP في ${currentLab}`);
         await fetch(FORM_URL, { method: 'POST', mode: 'no-cors', body: formData });
-        alert("تم إرسال نتيجتك بنجاح! ✅");
+        alert("تم إرسال النتيجة بنجاح! ✅");
     }
 
     function backToLabs() { document.getElementById('result-screen').style.display = 'none'; document.getElementById('tabs-container').style.display = 'block'; }
