@@ -13,26 +13,37 @@
         :root { --blue: #00f3ff; --purple: #bc13fe; --bg: #05070a; --green: #39ff14; --pink: #ff0055; }
         body, html { height: 100%; margin: 0; padding: 0; background: var(--bg); color: #fff; font-family: 'Cairo', sans-serif; overflow-x: hidden; display: flex; flex-direction: column; }
         .space-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: radial-gradient(circle at center, #1b2735 0%, #05070a 100%); }
+        
+        /* زر التحديث في الأعلى يسار */
+        .refresh-btn { position: fixed; top: 15px; left: 15px; z-index: 1000; background: rgba(255,255,255,0.1); border: 1px solid var(--blue); color: #fff; padding: 8px 12px; border-radius: 10px; cursor: pointer; font-size: 0.8rem; transition: 0.3s; }
+        .refresh-btn:hover { background: var(--blue); color: #000; box-shadow: 0 0 10px var(--blue); }
+
         .floating-atom { position: fixed; bottom: 20px; right: 20px; width: 80px; opacity: 0.6; animation: rotateAtom 10s linear infinite; z-index: 1; }
         @keyframes rotateAtom { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         .astronaut { width: 100px; margin-bottom: 15px; filter: drop-shadow(0 0 15px var(--blue)); animation: float 3s ease-in-out infinite; }
         @keyframes float { 0%, 100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(-15px) rotate(5deg); } }
+        
         .school-header { text-align: center; padding: 15px; background: rgba(0,0,0,0.7); backdrop-filter: blur(10px); border-bottom: 2px solid var(--blue); z-index: 10; }
         .glowing-title { font-family: 'Orbitron', sans-serif; text-shadow: 0 0 15px var(--blue); letter-spacing: 2px; }
         .main-wrapper { flex: 1; display: flex; align-items: center; justify-content: center; z-index: 5; padding: 20px; }
         .card { background: rgba(0,0,0,0.7); backdrop-filter: blur(25px); padding: 30px; border-radius: 30px; border: 2px solid var(--blue); text-align: center; box-shadow: 0 0 50px rgba(0, 243, 255, 0.15); max-width: 500px; width: 100%; position: relative; }
+        
         .input-style { width:90%; padding:15px; border-radius:15px; border:2px solid var(--blue); background:#000; color:#fff; text-align:center; font-size: 1.1rem; margin-bottom: 15px; }
         .btn { background: var(--purple); color: #fff; border: none; padding: 12px 25px; border-radius: 12px; cursor: pointer; font-weight: bold; transition: 0.3s; font-size: 1.1rem; }
         .btn:hover:not(:disabled) { background: var(--blue); color: #000; box-shadow: 0 0 20px var(--blue); transform: scale(1.05); }
+        
         .option { background: rgba(255,255,255,0.05); padding: 18px; margin: 12px 0; border-radius: 15px; cursor: pointer; text-align: right; transition: 0.3s; border: 1px solid rgba(0,243,255,0.2); }
         .correct { background: var(--green) !important; color: #000 !important; font-weight: bold; }
         .wrong { background: var(--pink) !important; color: #fff !important; }
-        .q-image { max-width: 100%; border-radius: 15px; margin-bottom: 15px; border: 2px solid var(--blue); display: none; margin-inline: auto; }
+        
+        .q-image { max-width: 100%; max-height: 200px; border-radius: 15px; margin-bottom: 15px; border: 2px solid var(--blue); display: none; margin-left: auto; margin-right: auto; }
+        
         #quiz-area, #tabs-container, #result-screen { display: none; }
     </style>
 </head>
 <body>
 
+<button class="refresh-btn" onclick="location.reload()">🔄 تحديث</button>
 <img src="https://cdn-icons-png.flaticon.com/512/2554/2554936.png" class="floating-atom" alt="atom">
 <div class="space-bg"></div>
 
@@ -86,14 +97,15 @@
         <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:20px;">
             <button id="submitBtn" class="btn" style="grid-column: span 2; padding:18px; background:var(--blue); color:#000;" onclick="sendResult()">📩 إرسال النتيجة للمعلم</button>
             <button class="btn" onclick="saveResultImage()">📸 حفظ النتيجة</button>
-            <button class="btn" onclick="backToLabs()">🏠 المختبرات</button>
+            <button class="btn" style="background:#25D366" onclick="sendWhatsApp()">💬 واتساب</button>
+            <button class="btn" style="grid-column: span 2;" onclick="backToLabs()">🏠 العودة للمختبرات</button>
         </div>
     </div>
 </div>
 
-<audio id="sound-correct" src="https://cdn.pixabay.com/audio/2021/08/04/audio_bb430d5540.mp3"></audio>
-<audio id="sound-wrong" src="https://cdn.pixabay.com/audio/2021/08/04/audio_c5cc51a4e1.mp3"></audio>
-<audio id="sound-win" src="https://cdn.pixabay.com/audio/2021/11/25/audio_91b32e01d9.mp3"></audio>
+<audio id="sound-correct" src="https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3"></audio>
+<audio id="sound-wrong" src="https://assets.mixkit.co/active_storage/sfx/2955/2955-preview.mp3"></audio>
+<audio id="sound-win" src="https://assets.mixkit.co/active_storage/sfx/1435/1435-preview.mp3"></audio>
 
 <script>
     const SHEET_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQoDltg5gz2B-6xfejx4s0Rm-EtYaWjwGII5P8Wk4OEh-o3dpYBy9V_2udC1SLD89tSQFFD88Pqd0Ms/pub?gid=0&single=true&output=csv';
@@ -139,7 +151,6 @@
         const lookup = (studentLevel.includes("سادس")) ? "سادس" : studentLevel;
         const qs = allData.filter(q => q['المختبر'] === currentLab && q['الصف'] === lookup && q['السؤال'] && q['السؤال'].trim() !== "");
         totalQs = qs.length;
-        
         document.getElementById('tabs-container').style.display = 'none';
         document.getElementById('quiz-area').style.display = 'block';
         loadQuestion(0);
@@ -188,13 +199,13 @@
         document.getElementById('sound-win').play();
         document.getElementById('finalName').innerText = studentName;
         document.getElementById('finalScore').innerText = `الدرجة: ${correctCount} من ${totalQs}`;
-        document.getElementById('detailedStats').innerText = `✅ إجابات صحيحة: ${correctCount} | ❌ إجابات خاطئة: ${wrongCount}`;
+        document.getElementById('detailedStats').innerText = `✅ صحيحة: ${correctCount} | ❌ خاطئة: ${wrongCount}`;
         document.getElementById('labInfo').innerText = `المختبر: ${currentLab} | الصف: ${studentLevel}`;
     }
 
     async function sendResult() {
         const sBtn = document.getElementById('submitBtn');
-        sBtn.innerText = "جاري الإرسال للمعلم... ⏳";
+        sBtn.innerText = "جاري الإرسال... ⏳";
         const resultText = `الدرجة: ${correctCount}/${totalQs} | صح: ${correctCount} | خطأ: ${wrongCount} | الصف: ${studentLevel} | التبويب: ${currentLab}`;
         
         const formData = new FormData();
@@ -205,13 +216,19 @@
             await fetch(FORM_URL, { method: 'POST', mode: 'no-cors', body: formData });
             sBtn.innerText = "تم الإرسال بنجاح ✅";
             sBtn.style.background = "var(--green)";
-        } catch { alert("خطأ في الاتصال"); }
+        } catch { alert("خطأ في الإرسال"); }
+    }
+
+    function sendWhatsApp() {
+        if(!teacherPhone) return alert("رقم المعلم غير متوفر");
+        const msg = `السلام عليكم أستاذ، أنا الطالب: ${studentName}\nالصف: ${studentLevel}\nأنهيت اختبار: ${currentLab}\nالنتيجة: ${correctCount} من ${totalQs}\n(✅: ${correctCount} | ❌: ${wrongCount})`;
+        window.open(`https://wa.me/${teacherPhone.replace(/\s+/g, '')}?text=${encodeURIComponent(msg)}`, '_blank');
     }
 
     function saveResultImage() {
         html2canvas(document.getElementById('photo-card')).then(canvas => {
             const link = document.createElement('a');
-            link.download = `نتيجة_${studentName}_${currentLab}.png`;
+            link.download = `نتيجة_${studentName}.png`;
             link.href = canvas.toDataURL();
             link.click();
         });
