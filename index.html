@@ -157,7 +157,6 @@
     window.onload = () => {
         fetchData();
         updateOnlineStatus();
-        initVisitorCounter();
     };
 
     // وظيفة حالة الاتصال
@@ -175,12 +174,27 @@
     window.addEventListener('online', updateOnlineStatus);
     window.addEventListener('offline', updateOnlineStatus);
 
-    // وظيفة عداد الزوار (محاكاة تعتمد على التخزين المحلي لضمان الخصوصية وسرعة الأداء)
+    // وظيفة عداد الزوار المرتبط بخانة Z
     function initVisitorCounter() {
-        let count = localStorage.getItem('visitorCount') || Math.floor(Math.random() * 500) + 100;
-        count = parseInt(count) + 1;
-        localStorage.setItem('visitorCount', count);
-        document.getElementById('v-count').innerText = count.toString().padStart(4, '0');
+        // البحث عن قيمة الخلية Z في أول صف بيانات
+        let controlValue = allData[0]['Z'] || allData[0]['الزوار']; 
+        let displayElement = document.getElementById('v-count');
+
+        if (controlValue == "0") {
+            // تصفير العداد
+            localStorage.setItem('persistentVisitorCount', 0);
+            displayElement.innerText = "0000";
+        } else if (controlValue == "1") {
+            // التسجيل التلقائي
+            let count = parseInt(localStorage.getItem('persistentVisitorCount') || "0");
+            // زيادة العداد فقط إذا كانت هذه جلسة جديدة أو تحديث
+            count += 1;
+            localStorage.setItem('persistentVisitorCount', count);
+            displayElement.innerText = count.toString().padStart(4, '0');
+        } else {
+            // عرض الرقم الموجود في الخلية مباشرة إذا كان رقماً آخر غير 0 و 1
+            displayElement.innerText = controlValue.toString().padStart(4, '0');
+        }
     }
 
     function fetchData() {
@@ -194,6 +208,9 @@
                 document.getElementById('ui-school-name').innerText = schoolName;
                 document.getElementById('ui-manager-name').innerText = "المدير: " + managerName;
                 document.getElementById('ui-teacher-name').innerText = "المعلم: " + teacherName;
+                
+                // تفعيل العداد بعد جلب البيانات
+                initVisitorCounter();
             }
         }});
     }
