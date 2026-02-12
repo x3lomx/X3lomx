@@ -11,56 +11,29 @@
     
     <style>
         :root { --blue: #00f3ff; --purple: #bc13fe; --bg: #05070a; --green: #39ff14; --pink: #ff0055; }
-        
         body, html { height: 100%; margin: 0; padding: 0; background: var(--bg); color: #fff; font-family: 'Cairo', sans-serif; overflow-x: hidden; display: flex; flex-direction: column; }
-        
-        /* خلفية الفضاء المتحركة */
         .space-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: radial-gradient(circle at center, #1b2735 0%, #05070a 100%); }
-        
-        /* أيقونة الذرة المتحركة في الزاوية */
         .floating-atom { position: fixed; bottom: 20px; right: 20px; width: 80px; opacity: 0.6; animation: rotateAtom 10s linear infinite; z-index: 1; }
         @keyframes rotateAtom { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-
-        /* رائد الفضاء المضيء والمتحرك */
         .astronaut { width: 100px; margin-bottom: 15px; filter: drop-shadow(0 0 15px var(--blue)); animation: float 3s ease-in-out infinite; }
         @keyframes float { 0%, 100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(-15px) rotate(5deg); } }
-
-        .logout-btn { position: fixed; top: 15px; left: 15px; z-index: 100; background: rgba(255,255,255,0.1); border: 1px solid var(--blue); color: #fff; padding: 8px 12px; border-radius: 10px; cursor: pointer; display: none; font-size: 0.8rem; transition: 0.3s; }
-        .logout-btn:hover { background: var(--blue); color: #000; box-shadow: 0 0 10px var(--blue); }
-
         .school-header { text-align: center; padding: 15px; background: rgba(0,0,0,0.7); backdrop-filter: blur(10px); border-bottom: 2px solid var(--blue); z-index: 10; }
-        .glowing-title { font-family: 'Orbitron', sans-serif; text-shadow: 0 0 15px var(--blue), 0 0 30px var(--purple); letter-spacing: 2px; }
-
+        .glowing-title { font-family: 'Orbitron', sans-serif; text-shadow: 0 0 15px var(--blue); letter-spacing: 2px; }
         .main-wrapper { flex: 1; display: flex; align-items: center; justify-content: center; z-index: 5; padding: 20px; }
-        
-        /* الكرت المتوهج */
-        .card { background: rgba(0,0,0,0.7); backdrop-filter: blur(25px); padding: 30px; border-radius: 30px; border: 2px solid var(--blue); text-align: center; box-shadow: 0 0 50px rgba(0, 243, 255, 0.15); max-width: 500px; width: 100%; position: relative; overflow: hidden; }
-        .card::before { content: ""; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: conic-gradient(transparent, transparent, var(--blue), transparent); animation: rotateBorder 6s linear infinite; z-index: -1; opacity: 0.3; }
-        @keyframes rotateBorder { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-
-        .input-style { width:90%; padding:15px; border-radius:15px; border:2px solid var(--blue); background:#000; color:#fff; text-align:center; font-size: 1.1rem; margin-bottom: 15px; outline: none; transition: 0.3s; }
-        .input-style:focus { box-shadow: 0 0 15px var(--blue); border-color: var(--purple); }
-
-        .btn { background: var(--purple); color: #fff; border: none; padding: 12px 25px; border-radius: 12px; cursor: pointer; font-weight: bold; transition: 0.3s; font-size: 1.1rem; box-shadow: 0 4px 15px rgba(188, 19, 254, 0.4); }
+        .card { background: rgba(0,0,0,0.7); backdrop-filter: blur(25px); padding: 30px; border-radius: 30px; border: 2px solid var(--blue); text-align: center; box-shadow: 0 0 50px rgba(0, 243, 255, 0.15); max-width: 500px; width: 100%; position: relative; }
+        .input-style { width:90%; padding:15px; border-radius:15px; border:2px solid var(--blue); background:#000; color:#fff; text-align:center; font-size: 1.1rem; margin-bottom: 15px; }
+        .btn { background: var(--purple); color: #fff; border: none; padding: 12px 25px; border-radius: 12px; cursor: pointer; font-weight: bold; transition: 0.3s; font-size: 1.1rem; }
         .btn:hover:not(:disabled) { background: var(--blue); color: #000; box-shadow: 0 0 20px var(--blue); transform: scale(1.05); }
-        .btn:disabled { background: #444; cursor: not-allowed; opacity: 0.7; }
-
-        .btn-send-big { grid-column: span 2; padding: 18px; font-size: 1.4rem; background: var(--blue); color: #000; }
-        .sent-success { background: var(--green) !important; color: #000 !important; border: 2px solid #fff; box-shadow: 0 0 20px var(--green) !important; }
-
-        .option { background: rgba(255,255,255,0.05); padding: 18px; margin: 12px 0; border-radius: 15px; cursor: pointer; text-align: right; transition: 0.3s; border: 1px solid rgba(0,243,255,0.2); font-size: 1.1rem; }
-        .option:hover { background: rgba(0,243,255,0.1); border-color: var(--blue); }
+        .option { background: rgba(255,255,255,0.05); padding: 18px; margin: 12px 0; border-radius: 15px; cursor: pointer; text-align: right; transition: 0.3s; border: 1px solid rgba(0,243,255,0.2); }
         .correct { background: var(--green) !important; color: #000 !important; font-weight: bold; }
         .wrong { background: var(--pink) !important; color: #fff !important; }
-        
+        .q-image { max-width: 100%; border-radius: 15px; margin-bottom: 15px; border: 2px solid var(--blue); display: none; margin-inline: auto; }
         #quiz-area, #tabs-container, #result-screen { display: none; }
     </style>
 </head>
 <body>
 
 <img src="https://cdn-icons-png.flaticon.com/512/2554/2554936.png" class="floating-atom" alt="atom">
-
-<button id="logoutBtn" class="logout-btn" onclick="location.reload()">🔄 تحديث الصفحة</button>
 <div class="space-bg"></div>
 
 <div class="school-header">
@@ -74,7 +47,7 @@
 <div class="main-wrapper">
     <div id="login-screen" class="card">
         <img src="https://cdn-icons-png.flaticon.com/512/2026/2026521.png" class="astronaut" alt="Astronaut">
-        <h1 class="glowing-title" style="font-size: 1.8rem; margin-bottom: 20px;">SCIENCE LAB</h1>
+        <h1 class="glowing-title" style="font-size: 1.8rem;">SCIENCE LAB</h1>
         <input type="text" id="stdName" class="input-style" placeholder="أدخل اسمك يا بطل">
         <select id="stdLevel" class="input-style">
             <option value="" disabled selected>اختر صفك الدراسي</option>
@@ -87,129 +60,123 @@
     </div>
 
     <div id="tabs-container" class="card">
-        <h3 id="welcome-msg" style="color: var(--blue); margin-bottom: 20px;"></h3>
+        <h3 id="welcome-msg" style="color: var(--blue);"></h3>
         <div id="tabs" style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;"></div>
     </div>
 
     <div id="quiz-area" class="card">
-        <div style="display:flex; justify-content: space-between; margin-bottom: 15px; color: var(--blue); font-family: 'Orbitron';">
-            <span id="timerText" style="color:var(--pink); font-weight: bold;">30s</span>
-            <span id="qCounter"></span>
+        <div style="display:flex; justify-content: space-between; margin-bottom: 10px;">
+            <span id="timerText" style="color:var(--pink); font-family: 'Orbitron'; font-weight: bold;">30s</span>
+            <span id="qCounter" style="color:var(--blue)"></span>
         </div>
-        <h2 id="qText" style="margin-bottom:25px; line-height: 1.4;"></h2>
+        <img id="questionImg" class="q-image" alt="Question Image">
+        <h2 id="qText" style="margin-bottom:20px;"></h2>
         <div id="optionsContainer"></div>
-        <div id="noQuestionsMsg" style="display:none; padding:20px;">
-            <img src="https://cdn-icons-png.flaticon.com/512/3563/3563395.png" style="width: 80px; margin-bottom: 15px;" alt="loading">
-            <p style="font-size: 1.2rem;">سيتم تفعيل هذا المختبر قريباً جداً.. انتظرونا! 🚀</p>
-            <button class="btn" onclick="backToLabs()" style="margin-top:15px;">العودة للمختبرات</button>
-        </div>
     </div>
 
     <div id="result-screen" style="width:100%; max-width:500px;">
         <div id="photo-card" class="card">
-            <img src="https://cdn-icons-png.flaticon.com/512/2026/2026521.png" class="astronaut" style="width: 70px;" alt="Astronaut">
-            <h2 style="color: var(--green); margin: 10px 0;">تم الإنجاز بنجاح!</h2>
-            <h3 id="finalName" style="color: #fff;"></h3>
-            <div id="finalScore" style="font-size:3.5rem; color:var(--blue); margin:15px 0; font-family: 'Orbitron'; text-shadow: 0 0 15px var(--blue);"></div>
-            <p id="labInfo" style="color:var(--purple); font-weight: bold;"></p>
+            <img src="https://cdn-icons-png.flaticon.com/512/2026/2026521.png" style="width: 70px;" alt="Astronaut">
+            <h2 style="color: var(--green);">تم الإنجاز!</h2>
+            <h3 id="finalName"></h3>
+            <div id="finalScore" style="font-size:2.8rem; color:var(--blue); font-family: 'Orbitron'; margin: 10px 0;"></div>
+            <p id="detailedStats" style="color: #fff; font-size: 1.1rem; background: rgba(255,255,255,0.1); padding: 10px; border-radius: 10px;"></p>
+            <p id="labInfo" style="color:var(--purple); font-weight: bold; margin-top: 10px;"></p>
         </div>
         <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:20px;">
-            <button id="submitBtn" class="btn btn-send-big" onclick="sendResult()">📩 إرسال النتيجة للمعلم</button>
+            <button id="submitBtn" class="btn" style="grid-column: span 2; padding:18px; background:var(--blue); color:#000;" onclick="sendResult()">📩 إرسال النتيجة للمعلم</button>
+            <button class="btn" onclick="saveResultImage()">📸 حفظ النتيجة</button>
             <button class="btn" onclick="backToLabs()">🏠 المختبرات</button>
-            <button class="btn" style="background:#25D366" onclick="sendWhatsApp()">💬 واتساب</button>
         </div>
     </div>
 </div>
+
+<audio id="sound-correct" src="https://cdn.pixabay.com/audio/2021/08/04/audio_bb430d5540.mp3"></audio>
+<audio id="sound-wrong" src="https://cdn.pixabay.com/audio/2021/08/04/audio_c5cc51a4e1.mp3"></audio>
+<audio id="sound-win" src="https://cdn.pixabay.com/audio/2021/11/25/audio_91b32e01d9.mp3"></audio>
 
 <script>
     const SHEET_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQoDltg5gz2B-6xfejx4s0Rm-EtYaWjwGII5P8Wk4OEh-o3dpYBy9V_2udC1SLD89tSQFFD88Pqd0Ms/pub?gid=0&single=true&output=csv';
     const FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSd6qV0wUZIOTA3maN-KuBBhzivjeF0lCYD37-Ecr4FErVu6Xw/formResponse';
     
-    let allData = [], studentName = "", studentLevel = "", score = 0, currentLab = "", teacherPhone = "";
+    let allData = [], studentName = "", studentLevel = "", correctCount = 0, wrongCount = 0, totalQs = 0, currentLab = "", teacherPhone = "";
 
     window.onload = fetchData;
 
     function fetchData() {
         Papa.parse(SHEET_CSV, { download: true, header: true, complete: (res) => {
-            const d = res.data;
-            if(d.length > 0) {
-                document.getElementById('ui-school-name').innerText = d[0]['المدرسة'] || "اسم المدرسة";
-                document.getElementById('ui-manager-name').innerText = "المدير: " + (d[0]['المدير'] || "اسم المدير");
-                document.getElementById('ui-teacher-name').innerText = "المعلم: " + (d[0]['المعلم'] || "اسم المعلم");
-                teacherPhone = d[0]['الهاتف'] || d[0]['رقم الهاتف'] || "";
+            allData = res.data;
+            if(allData.length > 0) {
+                document.getElementById('ui-school-name').innerText = allData[0]['المدرسة'] || "المعمل العلمي";
+                document.getElementById('ui-manager-name').innerText = "المدير: " + (allData[0]['المدير'] || "---");
+                document.getElementById('ui-teacher-name').innerText = "المعلم: " + (allData[0]['المعلم'] || "---");
+                teacherPhone = allData[0]['الهاتف'] || "";
             }
-            allData = d.filter(q => q['المختبر'] && q['المختبر'].trim() !== "");
         }});
     }
 
     function startApp() {
         studentName = document.getElementById('stdName').value;
         studentLevel = document.getElementById('stdLevel').value;
-        if(!studentName || !studentLevel) return alert("اكمل البيانات يا بطل!");
+        if(!studentName || !studentLevel) return alert("سجل بياناتك أولاً!");
         document.getElementById('login-screen').style.display = 'none';
         document.getElementById('tabs-container').style.display = 'block';
-        document.getElementById('logoutBtn').style.display = 'block';
-        document.getElementById('welcome-msg').innerText = `أهلاً بك يا ${studentName} في الفضاء`;
+        document.getElementById('welcome-msg').innerText = `أهلاً بك يا ${studentName}`;
         renderLabs();
     }
 
     function renderLabs() {
-        let lookup = (studentLevel === "سادس أ" || studentLevel === "سادس ب") ? "سادس" : studentLevel;
-        const labs = [...new Set(allData
-            .filter(q => q['الصف'] && q['الصف'].trim() === lookup)
-            .map(q => q['المختبر'].trim()))];
-
-        const div = document.getElementById('tabs'); 
-        div.innerHTML = "";
-        
-        if(labs.length === 0) {
-            div.innerHTML = "<p style='grid-column:span 2'>لا توجد مختبرات متاحة حالياً.</p>";
-            return;
-        }
-
+        let lookup = (studentLevel.includes("سادس")) ? "سادس" : studentLevel;
+        const labs = [...new Set(allData.filter(q => q['الصف'] && q['الصف'].trim() === lookup).map(q => q['المختبر'].trim()))];
+        const div = document.getElementById('tabs'); div.innerHTML = "";
         labs.forEach(l => {
             div.innerHTML += `<button class="btn" style="background:rgba(255,255,255,0.05); border:1px solid var(--blue);" onclick="startQuiz('${l}')">${l}</button>`;
         });
     }
 
     function startQuiz(lab) {
-        currentLab = lab; score = 0;
+        currentLab = lab; correctCount = 0; wrongCount = 0;
+        const lookup = (studentLevel.includes("سادس")) ? "سادس" : studentLevel;
+        const qs = allData.filter(q => q['المختبر'] === currentLab && q['الصف'] === lookup && q['السؤال'] && q['السؤال'].trim() !== "");
+        totalQs = qs.length;
+        
         document.getElementById('tabs-container').style.display = 'none';
         document.getElementById('quiz-area').style.display = 'block';
-        
-        const questions = allData.filter(q => q['المختبر'].trim() === currentLab && q['السؤال'] && q['السؤال'].trim() !== "");
-        
-        if(questions.length > 0) {
-            document.getElementById('noQuestionsMsg').style.display = 'none';
-            document.getElementById('optionsContainer').style.display = 'block';
-            document.getElementById('qCounter').style.display = 'block';
-            document.getElementById('timerText').style.display = 'block';
-            loadQuestion(0);
-        } else {
-            document.getElementById('qText').innerText = currentLab;
-            document.getElementById('optionsContainer').style.display = 'none';
-            document.getElementById('qCounter').style.display = 'none';
-            document.getElementById('timerText').style.display = 'none';
-            document.getElementById('noQuestionsMsg').style.display = 'block';
-        }
+        loadQuestion(0);
     }
 
     function loadQuestion(idx) {
-        const lookup = (studentLevel === "سادس أ" || studentLevel === "سادس ب") ? "سادس" : studentLevel;
-        const qs = allData.filter(q => q['المختبر'].trim() === currentLab && q['الصف'].trim() === lookup);
+        const lookup = (studentLevel.includes("سادس")) ? "سادس" : studentLevel;
+        const qs = allData.filter(q => q['المختبر'] === currentLab && q['الصف'] === lookup && q['السؤال'] && q['السؤال'].trim() !== "");
         
         if(idx >= qs.length) return showResult();
         
         const q = qs[idx];
         document.getElementById('qCounter').innerText = `${idx+1} / ${qs.length}`;
         document.getElementById('qText').innerText = q['السؤال'];
+        
+        const imgEl = document.getElementById('questionImg');
+        if(q['الصورة'] && q['الصورة'].trim() !== "") {
+            imgEl.src = q['الصورة'];
+            imgEl.style.display = 'block';
+        } else {
+            imgEl.style.display = 'none';
+        }
+
         const opts = [q['الإجابة الصحيحة'], q['إجابة خاطئة']].sort(() => Math.random() - 0.5);
         const container = document.getElementById('optionsContainer'); container.innerHTML = "";
+        
         opts.forEach(o => {
             const div = document.createElement('div'); div.className = 'option'; div.innerText = o;
             div.onclick = () => {
-                if(o === q['الإجابة الصحيحة']) { div.classList.add('correct'); score++; } else { div.classList.add('wrong'); }
-                setTimeout(() => loadQuestion(idx+1), 500);
+                if(o === q['الإجابة الصحيحة']) {
+                    div.classList.add('correct'); correctCount++;
+                    document.getElementById('sound-correct').play();
+                } else {
+                    div.classList.add('wrong'); wrongCount++;
+                    document.getElementById('sound-wrong').play();
+                }
+                setTimeout(() => loadQuestion(idx+1), 600);
             };
             container.appendChild(div);
         });
@@ -218,41 +185,41 @@
     function showResult() {
         document.getElementById('quiz-area').style.display = 'none';
         document.getElementById('result-screen').style.display = 'block';
+        document.getElementById('sound-win').play();
         document.getElementById('finalName').innerText = studentName;
-        document.getElementById('finalScore').innerText = score + " XP";
+        document.getElementById('finalScore').innerText = `الدرجة: ${correctCount} من ${totalQs}`;
+        document.getElementById('detailedStats').innerText = `✅ إجابات صحيحة: ${correctCount} | ❌ إجابات خاطئة: ${wrongCount}`;
         document.getElementById('labInfo').innerText = `المختبر: ${currentLab} | الصف: ${studentLevel}`;
-        const sBtn = document.getElementById('submitBtn');
-        sBtn.innerText = "📩 إرسال النتيجة للمعلم";
-        sBtn.disabled = false;
-        sBtn.classList.remove('sent-success');
     }
 
     async function sendResult() {
         const sBtn = document.getElementById('submitBtn');
-        sBtn.innerText = "جاري الإرسال... ⏳";
-        sBtn.disabled = true;
+        sBtn.innerText = "جاري الإرسال للمعلم... ⏳";
+        const resultText = `الدرجة: ${correctCount}/${totalQs} | صح: ${correctCount} | خطأ: ${wrongCount} | الصف: ${studentLevel} | التبويب: ${currentLab}`;
+        
         const formData = new FormData();
-        formData.append('entry.851707482', `${studentName}`); 
-        formData.append('entry.1149023992', `النتيجة: ${score} | الصف: ${studentLevel} | التبويب: ${currentLab}`);
+        formData.append('entry.851707482', studentName);
+        formData.append('entry.1149023992', resultText);
+        
         try {
             await fetch(FORM_URL, { method: 'POST', mode: 'no-cors', body: formData });
             sBtn.innerText = "تم الإرسال بنجاح ✅";
-            sBtn.classList.add('sent-success');
-        } catch (e) {
-            sBtn.innerText = "خطأ في الإرسال! حاول ثانية";
-            sBtn.disabled = false;
-        }
+            sBtn.style.background = "var(--green)";
+        } catch { alert("خطأ في الاتصال"); }
     }
 
-    function sendWhatsApp() {
-        const msg = `أهلاً أستاذ، أنا الطالب ${studentName} من صف ${studentLevel}. أنهيت اختبار (${currentLab}) وحصلت على ${score} XP.`;
-        window.open(`https://wa.me/${teacherPhone.replace(/\s+/g, '')}?text=${encodeURIComponent(msg)}`, '_blank');
+    function saveResultImage() {
+        html2canvas(document.getElementById('photo-card')).then(canvas => {
+            const link = document.createElement('a');
+            link.download = `نتيجة_${studentName}_${currentLab}.png`;
+            link.href = canvas.toDataURL();
+            link.click();
+        });
     }
 
-    function backToLabs() { 
-        document.getElementById('quiz-area').style.display = 'none';
-        document.getElementById('result-screen').style.display = 'none'; 
-        document.getElementById('tabs-container').style.display = 'block'; 
+    function backToLabs() {
+        document.getElementById('result-screen').style.display = 'none';
+        document.getElementById('tabs-container').style.display = 'block';
     }
 </script>
 </body>
