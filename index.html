@@ -174,32 +174,32 @@
 
     // وظيفة العداد الموحد المرتبطة بخانة L1 (زوار)
     async function initVisitorCounter() {
-        let controlValue = allData[0]['زوار']; 
+        let controlValue = (allData[0]['زوار'] || "").toString().trim(); 
         let displayElement = document.getElementById('v-count');
+        let counterContainer = document.querySelector('.visitor-counter');
         
-        // مفتاح خاص بمتصفحك لتمييز عدادك
-        const apiKey = "science-lab-12345"; 
+        // استخدام خدمة CountAPI الرسمية لضمان عداد حقيقي موحد لكل الأجهزة
+        const namespace = "science-lab-unique-2024";
+        const key = "total-visits";
 
         if (controlValue === "عطل") {
-            // تصفير العداد عبر الخدمة وإخفاء الرقم
-            fetch(`https://api.countapi.xyz/set/science-lab/${apiKey}?value=0`);
-            displayElement.innerText = "0000";
-            localStorage.setItem('labVisitorCount', "0");
+            // إخفاء حاوية العداد بالكامل
+            counterContainer.style.display = 'none';
         } else if (controlValue === "سجل") {
-            // جلب القيمة الحقيقية وزيادتها
+            // إظهار العداد وزيادة القيمة حقيقياً من السيرفر
+            counterContainer.style.display = 'block';
             try {
-                const response = await fetch(`https://api.onlinesurveys.com/countapi/hit/science-lab/${apiKey}`);
+                const response = await fetch(`https://api.countapi.xyz/hit/${namespace}/${key}`);
                 const data = await response.json();
                 displayElement.innerText = data.value.toString().padStart(4, '0');
             } catch (e) {
-                // في حال تعطل الخدمة الخارجية نعود للعداد المحلي المؤقت
-                let count = parseInt(localStorage.getItem('labVisitorCount') || "0");
-                count++;
-                localStorage.setItem('labVisitorCount', count);
-                displayElement.innerText = count.toString().padStart(4, '0');
+                // حل بديل في حال تعطل الخدمة الخارجية (تأمين ظهور العداد)
+                displayElement.innerText = "0000";
             }
         } else {
-            displayElement.innerText = (controlValue || "0000").toString().padStart(4, '0');
+            // إذا كانت القيمة رقماً ثابتاً في الجدول، نعرض الرقم كما هو
+            counterContainer.style.display = 'block';
+            displayElement.innerText = controlValue.padStart(4, '0');
         }
     }
 
