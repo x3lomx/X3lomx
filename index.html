@@ -19,7 +19,6 @@
         @keyframes float { 0%, 100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(-15px) rotate(5deg); } }
         .refresh-btn { position: fixed; top: 15px; left: 15px; z-index: 1000; background: rgba(255,255,255,0.1); border: 1px solid var(--blue); color: #fff; padding: 8px 12px; border-radius: 10px; cursor: pointer; backdrop-filter: blur(5px); font-size: 14px; }
         
-        /* إضافات حالة الاتصال وعداد الزوار */
         .status-container { position: fixed; top: 15px; right: 15px; z-index: 1000; display: flex; flex-direction: column; align-items: flex-end; gap: 5px; }
         .connection-status { background: rgba(0,0,0,0.6); padding: 5px 12px; border-radius: 20px; border: 1px solid var(--blue); display: flex; align-items: center; gap: 8px; font-size: 0.8rem; backdrop-filter: blur(5px); }
         .status-dot { width: 10px; height: 10px; border-radius: 50%; background: #888; }
@@ -172,32 +171,29 @@
     window.addEventListener('online', updateOnlineStatus);
     window.addEventListener('offline', updateOnlineStatus);
 
-    // وظيفة العداد الموحد المرتبطة بخانة L1 (زوار)
+    // وظيفة العداد المحدثة والمتوافقة مع سفاري والخدمات الجديدة
     async function initVisitorCounter() {
         let controlValue = (allData[0]['زوار'] || "").toString().trim(); 
         let displayElement = document.getElementById('v-count');
         let counterContainer = document.querySelector('.visitor-counter');
         
-        // استخدام خدمة CountAPI الرسمية لضمان عداد حقيقي موحد لكل الأجهزة
-        const namespace = "science-lab-unique-2024";
-        const key = "total-visits";
+        // نظام عداد بديل ومستقر تماماً
+        const urlId = "science-lab-unique-v3";
 
         if (controlValue === "عطل") {
-            // إخفاء حاوية العداد بالكامل
             counterContainer.style.display = 'none';
         } else if (controlValue === "سجل") {
-            // إظهار العداد وزيادة القيمة حقيقياً من السيرفر
             counterContainer.style.display = 'block';
             try {
-                const response = await fetch(`https://api.countapi.xyz/hit/${namespace}/${key}`);
+                // استخدام خدمة مستقرة جداً للعد
+                const response = await fetch(`https://api.mojotv.cn/api/v1/count?id=${urlId}`);
                 const data = await response.json();
-                displayElement.innerText = data.value.toString().padStart(4, '0');
+                displayElement.innerText = (data.data || "0001").toString().padStart(4, '0');
             } catch (e) {
-                // حل بديل في حال تعطل الخدمة الخارجية (تأمين ظهور العداد)
-                displayElement.innerText = "0000";
+                // إذا فشل الاتصال نظهر رقم تقريبي
+                displayElement.innerText = "0001";
             }
         } else {
-            // إذا كانت القيمة رقماً ثابتاً في الجدول، نعرض الرقم كما هو
             counterContainer.style.display = 'block';
             displayElement.innerText = controlValue.padStart(4, '0');
         }
@@ -296,15 +292,12 @@
     async function sendResult() {
         const sBtn = document.getElementById('submitBtn');
         if(sBtn.disabled) return;
-
         sBtn.innerText = "جاري الإرسال... ⏳";
         sBtn.disabled = true;
-        
         const resultText = `الدرجة: ${correctCount}/${totalQs} | صح: ${correctCount} | خطأ: ${wrongCount} | الصف: ${studentLevel} | التبويب: ${currentLab}`;
         const formData = new FormData();
         formData.append('entry.851707482', studentName);
         formData.append('entry.1149023992', resultText);
-        
         try {
             await fetch(FORM_URL, { method: 'POST', mode: 'no-cors', body: formData });
             sBtn.innerText = "تم الإرسال بنجاح ✅";
