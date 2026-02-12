@@ -15,9 +15,9 @@
         
         .space-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: radial-gradient(circle at center, #1b2735 0%, #05070a 100%); }
         
-        /* زر تحديث الصفحة في الزاوية */
-        .logout-btn { position: fixed; top: 15px; left: 15px; z-index: 100; background: rgba(255,255,255,0.1); border: 1px solid var(--pink); color: #fff; padding: 8px 12px; border-radius: 10px; cursor: pointer; display: none; font-size: 0.8rem; transition: 0.3s; }
-        .logout-btn:hover { background: var(--pink); box-shadow: 0 0 10px var(--pink); }
+        /* زر تحديث الصفحة */
+        .logout-btn { position: fixed; top: 15px; left: 15px; z-index: 100; background: rgba(255,255,255,0.1); border: 1px solid var(--blue); color: #fff; padding: 8px 12px; border-radius: 10px; cursor: pointer; display: none; font-size: 0.8rem; transition: 0.3s; }
+        .logout-btn:hover { background: var(--blue); color: #000; box-shadow: 0 0 10px var(--blue); }
 
         .school-header { text-align: center; padding: 15px; background: rgba(0,0,0,0.7); backdrop-filter: blur(10px); border-bottom: 2px solid var(--blue); z-index: 10; }
         .glowing-title { font-family: 'Orbitron', sans-serif; text-shadow: 0 0 10px var(--blue); }
@@ -43,13 +43,16 @@
 </head>
 <body>
 
-<button id="logoutBtn" class="logout-btn" onclick="location.reload()">🔄 تغيير المستخدم</button>
+<button id="logoutBtn" class="logout-btn" onclick="location.reload()">🔄 تحديث الصفحة</button>
 
 <div class="space-bg"></div>
 
 <div class="school-header">
-    <h2 id="ui-school-name" class="glowing-title" style="margin:0;">منصة معمل العلوم</h2>
-    <p style="margin:5px 0;"><span id="ui-teacher-name" style="color:var(--green)">...</span></p>
+    <h2 id="ui-school-name" class="glowing-title" style="margin:0;">جاري التحميل...</h2>
+    <p style="margin:5px 0;">
+        <span id="ui-manager-name" style="color:var(--blue)">...</span> | 
+        <span id="ui-teacher-name" style="color:var(--green)">...</span>
+    </p>
 </div>
 
 <div class="main-wrapper">
@@ -108,7 +111,10 @@
         Papa.parse(SHEET_CSV, { download: true, header: true, complete: (res) => {
             const d = res.data;
             if(d.length > 0) {
-                document.getElementById('ui-teacher-name').innerText = "المعلم: " + (d[0]['المعلم'] || "ريان الاسمري");
+                // جلب البيانات وربطها بالهيدر مباشرة من الجدول
+                document.getElementById('ui-school-name').innerText = d[0]['المدرسة'] || "اسم المدرسة";
+                document.getElementById('ui-manager-name').innerText = "المدير: " + (d[0]['المدير'] || "اسم المدير");
+                document.getElementById('ui-teacher-name').innerText = "المعلم: " + (d[0]['المعلم'] || "اسم المعلم");
                 teacherPhone = d[0]['الهاتف'] || d[0]['رقم الهاتف'] || "";
             }
             allQuestions = d.filter(q => q['المختبر']).map(q => ({
@@ -128,7 +134,7 @@
         
         document.getElementById('login-screen').style.display = 'none';
         document.getElementById('tabs-container').style.display = 'block';
-        document.getElementById('logoutBtn').style.display = 'block';
+        document.getElementById('logoutBtn').style.display = 'block'; // إظهار زر التحديث
         document.getElementById('welcome-msg').innerText = `أهلاً ${studentName} (${studentLevel})`;
         renderLabs();
     }
@@ -174,7 +180,6 @@
         document.getElementById('finalScore').innerText = score + " XP";
         document.getElementById('labInfo').innerText = `المختبر: ${currentLab} | الصف: ${studentLevel}`;
         
-        // إعادة تهيئة زر الإرسال عند عرض نتيجة جديدة
         const sBtn = document.getElementById('submitBtn');
         sBtn.innerText = "📩 إرسال النتيجة للمعلم";
         sBtn.disabled = false;
@@ -187,7 +192,6 @@
         sBtn.disabled = true;
 
         const formData = new FormData();
-        // إرسال البيانات بشكل منظم (الاسم - الصف - التبويب)
         formData.append('entry.851707482', `${studentName}`); 
         formData.append('entry.1149023992', `النتيجة: ${score} | الصف: ${studentLevel} | التبويب: ${currentLab}`);
 
