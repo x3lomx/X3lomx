@@ -43,7 +43,6 @@
         .report-q-item { border-bottom: 1px dashed rgba(0, 243, 255, 0.3); padding: 15px 0; text-align: right; }
         #quiz-area, #tabs-container, #result-screen { display: none; }
 
-        /* تحسينات الاستجابة لجميع الأجهزة */
         @media (max-width: 600px) {
             .card { padding: 20px; border-radius: 25px; width: 90%; }
             .glowing-title { font-size: 1.5rem !important; }
@@ -159,7 +158,6 @@
         updateOnlineStatus();
     };
 
-    // وظيفة حالة الاتصال
     function updateOnlineStatus() {
         const dot = document.getElementById('status-dot');
         const txt = document.getElementById('status-text');
@@ -174,26 +172,34 @@
     window.addEventListener('online', updateOnlineStatus);
     window.addEventListener('offline', updateOnlineStatus);
 
-    // وظيفة عداد الزوار المرتبط بخانة Z
-    function initVisitorCounter() {
-        // البحث عن قيمة الخلية Z في أول صف بيانات
-        let controlValue = allData[0]['Z'] || allData[0]['الزوار']; 
+    // وظيفة العداد الموحد المرتبطة بخانة L1 (زوار)
+    async function initVisitorCounter() {
+        let controlValue = allData[0]['زوار']; 
         let displayElement = document.getElementById('v-count');
+        
+        // مفتاح خاص بمتصفحك لتمييز عدادك
+        const apiKey = "science-lab-12345"; 
 
-        if (controlValue == "0") {
-            // تصفير العداد
-            localStorage.setItem('persistentVisitorCount', 0);
+        if (controlValue === "عطل") {
+            // تصفير العداد عبر الخدمة وإخفاء الرقم
+            fetch(`https://api.countapi.xyz/set/science-lab/${apiKey}?value=0`);
             displayElement.innerText = "0000";
-        } else if (controlValue == "1") {
-            // التسجيل التلقائي
-            let count = parseInt(localStorage.getItem('persistentVisitorCount') || "0");
-            // زيادة العداد فقط إذا كانت هذه جلسة جديدة أو تحديث
-            count += 1;
-            localStorage.setItem('persistentVisitorCount', count);
-            displayElement.innerText = count.toString().padStart(4, '0');
+            localStorage.setItem('labVisitorCount', "0");
+        } else if (controlValue === "سجل") {
+            // جلب القيمة الحقيقية وزيادتها
+            try {
+                const response = await fetch(`https://api.onlinesurveys.com/countapi/hit/science-lab/${apiKey}`);
+                const data = await response.json();
+                displayElement.innerText = data.value.toString().padStart(4, '0');
+            } catch (e) {
+                // في حال تعطل الخدمة الخارجية نعود للعداد المحلي المؤقت
+                let count = parseInt(localStorage.getItem('labVisitorCount') || "0");
+                count++;
+                localStorage.setItem('labVisitorCount', count);
+                displayElement.innerText = count.toString().padStart(4, '0');
+            }
         } else {
-            // عرض الرقم الموجود في الخلية مباشرة إذا كان رقماً آخر غير 0 و 1
-            displayElement.innerText = controlValue.toString().padStart(4, '0');
+            displayElement.innerText = (controlValue || "0000").toString().padStart(4, '0');
         }
     }
 
@@ -209,7 +215,6 @@
                 document.getElementById('ui-manager-name').innerText = "المدير: " + managerName;
                 document.getElementById('ui-teacher-name').innerText = "المعلم: " + teacherName;
                 
-                // تفعيل العداد بعد جلب البيانات
                 initVisitorCounter();
             }
         }});
