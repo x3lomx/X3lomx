@@ -26,20 +26,16 @@
         .main-wrapper { flex: 1; display: flex; align-items: center; justify-content: center; z-index: 5; padding: 20px; }
         .card { background: rgba(0,0,0,0.6); backdrop-filter: blur(20px); padding: 30px; border-radius: 30px; border: 1px solid var(--blue); text-align: center; box-shadow: 0 0 40px rgba(0, 243, 255, 0.2); max-width: 500px; width: 100%; position: relative; }
         
-        /* رمز الطفل برداء الفضاء */
         .astronaut-icon { width: 80px; height: 80px; margin-bottom: 10px; filter: drop-shadow(0 0 10px var(--blue)); }
-
         .question-img { max-width: 100%; max-height: 180px; border-radius: 15px; border: 2px solid var(--purple); margin: 0 auto 15px auto; display: none; object-fit: contain; }
 
         .btn { background: var(--purple); color: #fff; border: none; padding: 12px 25px; border-radius: 12px; cursor: pointer; font-weight: bold; transition: 0.3s; font-size: 1.1rem; }
         .btn:hover { background: var(--blue); color: #000; box-shadow: 0 0 15px var(--blue); }
         
-        /* أزرار مصغرة في النهاية */
         .btn-small { padding: 8px 10px; font-size: 0.8rem; border-radius: 8px; background: rgba(255,255,255,0.1); border: 1px solid var(--blue); }
         .btn-send-big { grid-column: span 2; padding: 18px; font-size: 1.4rem; background: var(--green); color: #000; box-shadow: 0 0 20px var(--green); }
         .btn-wa { background: #25D366; color: #fff; border: none; }
 
-        /* ألوان الإجابات */
         .option { background: rgba(255,255,255,0.1); padding: 15px; margin: 10px 0; border-radius: 15px; cursor: pointer; text-align: right; transition: 0.2s; border: 1px solid transparent; font-size: 1.1rem; }
         .correct { background: var(--green) !important; color: #000 !important; border-color: #fff !important; font-weight: bold; }
         .wrong { background: var(--pink) !important; color: #fff !important; border-color: #fff !important; }
@@ -124,7 +120,9 @@
                 document.getElementById('ui-school-name').innerText = d[0]['المدرسة'] || "مدرسة ذات الصواري";
                 document.getElementById('ui-manager-name').innerText = d[0]['المدير'] || "أ. سهيل عقيلي";
                 document.getElementById('ui-teacher-name').innerText = d[0]['المعلم'] || "أ. ريان الاسمري";
-                teacherPhone = d[0]['الهاتف'] || "";
+                
+                // تعديل هنا: التأكد من قراءة رقم الهاتف بكل الاحتمالات
+                teacherPhone = d[0]['الهاتف'] || d[0]['رقم الهاتف'] || d[0]['هاتف'] || "";
             }
             allQuestions = d.filter(q => q['المختبر']).map(q => {
                 const ln = q['المختبر'].trim();
@@ -194,9 +192,11 @@
     }
 
     function sendWhatsApp() {
-        if(!teacherPhone) return alert("رقم المعلم غير مسجل!");
+        if(!teacherPhone || teacherPhone.trim() === "") {
+            return alert("خطأ: لم نتمكن من العثور على رقم المعلم في الجدول. تأكد أن اسم العمود هو 'الهاتف' أو 'رقم الهاتف'.");
+        }
         const msg = `أهلاً أستاذي، أنا ${studentName}. أنهيت مختبر ${currentLab} بنتيجة ${score} XP.`;
-        window.open(`https://wa.me/${teacherPhone}?text=${encodeURIComponent(msg)}`, '_blank');
+        window.open(`https://wa.me/${teacherPhone.replace(/\s+/g, '')}?text=${encodeURIComponent(msg)}`, '_blank');
     }
 
     function saveFullReport() {
