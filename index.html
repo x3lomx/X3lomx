@@ -23,30 +23,16 @@
 
         .space-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: radial-gradient(circle at center, #1b2735 0%, #05070a 100%); }
         
-        .astronaut { width: 110px; margin-bottom: 20px; filter: drop-shadow(0 0 15px var(--blue)); animation: float 3s ease-in-out infinite; }
-        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-        
-        /* زر التحديث في الزاوية العلوية اليسرى */
-        .refresh-btn { 
-            position: fixed; top: 15px; left: 15px; z-index: 2500; 
-            background: rgba(0, 243, 255, 0.2); border: 1px solid var(--blue); 
-            color: #fff; padding: 8px 15px; border-radius: 12px; 
-            cursor: pointer; backdrop-filter: blur(5px); font-size: 14px;
-            font-family: 'Cairo', sans-serif; display: flex; align-items: center; gap: 5px;
-        }
-
         .school-header { position: relative; text-align: center; padding: 15px; background: rgba(0,0,0,0.85); backdrop-filter: blur(15px); border-bottom: 2px solid var(--blue); z-index: 1500; width: 100%; }
         .glowing-title { font-family: 'Orbitron', sans-serif; text-shadow: 0 0 15px var(--blue); font-size: 1.2rem; margin: 0; }
 
         .dashboard-bar { display: flex; justify-content: center; align-items: center; gap: 10px; padding: 10px; background: rgba(0,0,0,0.4); border-bottom: 1px solid rgba(0, 243, 255, 0.2); flex-wrap: wrap; width: 100%; }
         .stat-item { background: rgba(0,0,0,0.6); padding: 5px 12px; border-radius: 15px; border: 1px solid var(--blue); display: flex; align-items: center; gap: 8px; font-size: 0.8rem; color: #fff; }
         
-        /* تأثير الوميض للنتائج والمتواجدون */
         .blink-stat { animation: blinker 1.5s linear infinite; }
         @keyframes blinker { 50% { opacity: 0.3; } }
 
-        .status-dot { width: 10px; height: 10px; border-radius: 50%; background: #888; }
-        .status-online { background: var(--green); box-shadow: 0 0 12px var(--green); }
+        .status-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--green); box-shadow: 0 0 12px var(--green); }
 
         .main-wrapper { flex: 1; display: flex; align-items: center; justify-content: center; z-index: 5; padding: 20px; width: 100%; }
         
@@ -56,6 +42,15 @@
             text-align: center; width: 100%; max-width: 450px; 
             box-shadow: 0 0 40px rgba(0, 243, 255, 0.2); 
             margin: auto; display: flex; flex-direction: column; align-items: center;
+            position: relative; /* لجعل زر التحديث يثبت داخله */
+        }
+
+        /* زر التحديث الجديد داخل القائمة بالزاوية العلوية اليسرى */
+        .card-refresh-btn {
+            position: absolute; top: 15px; left: 15px;
+            background: rgba(255,255,255,0.1); border: 1px solid var(--blue);
+            color: #fff; padding: 5px 10px; border-radius: 8px;
+            cursor: pointer; font-size: 12px; z-index: 10;
         }
 
         .input-style { 
@@ -64,12 +59,21 @@
             font-size: 1rem; margin-bottom: 15px; outline: none; 
         }
 
-        .btn { background: var(--purple); color: #fff; border: none; padding: 14px 20px; border-radius: 15px; cursor: pointer; font-weight: bold; transition: 0.3s; font-size: 1.1rem; width: 90%; position: relative; }
+        .btn { background: var(--purple); color: #fff; border: none; padding: 14px 20px; border-radius: 15px; cursor: pointer; font-weight: bold; transition: 0.3s; font-size: 1.1rem; width: 90%; display: flex; align-items: center; justify-content: center; gap: 8px; }
         .btn:hover { background: var(--blue); color: #000; box-shadow: 0 0 20px var(--blue); }
         
-        /* رمز التنبيه الوامض داخل الزر */
-        .alert-icon { color: yellow; animation: icon-blink 0.8s infinite; margin-left: 8px; }
-        @keyframes icon-blink { 0%, 100% { opacity: 1; transform: scale(1.1); } 50% { opacity: 0; transform: scale(0.9); } }
+        /* رمز التنبيه الوامض المحدث ليعمل على الجوال والكمبيوتر */
+        .alert-icon { 
+            display: inline-block;
+            color: #ffff00; 
+            font-weight: bold;
+            animation: mobile-blink 0.8s ease-in-out infinite; 
+        }
+        @keyframes mobile-blink { 
+            0% { opacity: 1; } 
+            50% { opacity: 0.1; } 
+            100% { opacity: 1; } 
+        }
 
         .option { background: rgba(255,255,255,0.05); padding: 15px; margin: 10px 0; border-radius: 18px; cursor: pointer; text-align: right; border: 1px solid rgba(0,243,255,0.2); width: 100%; transition: 0.2s; }
         .correct { background: var(--green) !important; color: #000 !important; font-weight: bold; }
@@ -79,16 +83,11 @@
         #report-capture { position: absolute; left: -9999px; top: 0; width: 700px; background: #05070a; padding: 50px; color: white; border: 8px solid var(--blue); border-radius: 20px; }
         
         #quiz-area, #tabs-container, #result-screen { display: none; width: 100%; }
-
-        @media (max-width: 600px) {
-            .card { width: 95%; padding: 25px 15px; }
-            .glowing-title { font-size: 1rem !important; }
-        }
+        @media (max-width: 600px) { .card { width: 95%; padding: 25px 15px; } }
     </style>
 </head>
 <body>
 
-<button class="refresh-btn" onclick="location.reload()">🔄 تحديث</button>
 <div class="space-bg"></div>
 
 <div class="school-header">
@@ -101,8 +100,8 @@
 
 <div id="dashboard" class="dashboard-bar">
     <div class="stat-item">
-        <span id="status-dot" class="status-dot status-online"></span>
-        <span id="status-text">متصل</span>
+        <span id="status-dot" class="status-dot"></span>
+        <span>متصل</span>
     </div>
     <div class="stat-item blink-stat">
         <span>نتائج مرسلة:</span>
@@ -116,8 +115,8 @@
 
 <div class="main-wrapper">
     <div id="login-screen" class="card">
-        <img src="https://cdn-icons-png.flaticon.com/512/2026/2026521.png" class="astronaut" alt="Astronaut">
-        <h1 class="glowing-title" style="font-size: 1.8rem; margin-bottom: 20px;">SCIENCE LAB</h1>
+        <button class="card-refresh-btn" onclick="location.reload()">🔄 تحديث</button>
+        <h1 class="glowing-title" style="font-size: 1.8rem; margin-top: 20px; margin-bottom: 20px;">SCIENCE LAB</h1>
         <input type="text" id="stdName" class="input-style" placeholder="أدخل اسمك يا بطل">
         <select id="stdLevel" class="input-style">
             <option value="" disabled selected>اختر صفك الدراسي</option>
@@ -130,12 +129,14 @@
     </div>
 
     <div id="tabs-container" class="card">
-        <h3 id="welcome-msg" style="color: var(--blue); margin-bottom: 25px;"></h3>
+        <button class="card-refresh-btn" onclick="location.reload()">🔄 تحديث</button>
+        <h3 id="welcome-msg" style="color: var(--blue); margin-top: 30px; margin-bottom: 25px;"></h3>
         <div id="tabs" style="display:grid; grid-template-columns: 1fr; gap:12px; width:100%;"></div>
     </div>
 
     <div id="quiz-area" class="card">
-        <div style="display:flex; justify-content: space-between; width:100%; margin-bottom: 15px;">
+        <button class="card-refresh-btn" onclick="location.reload()">🔄 تحديث</button>
+        <div style="display:flex; justify-content: space-between; width:100%; margin-top: 30px; margin-bottom: 15px;">
             <span id="timerText" style="color:var(--pink); font-family: 'Orbitron'; font-weight: bold;">30s</span>
             <span id="qCounter" style="color:var(--blue); font-weight: bold;"></span>
         </div>
@@ -145,13 +146,14 @@
     </div>
 
     <div id="result-screen" class="card">
-        <h2 style="color: var(--green); margin: 10px 0;">تم الإنجاز بنجاح!</h2>
+        <button class="card-refresh-btn" onclick="location.reload()">🔄 تحديث</button>
+        <h2 style="color: var(--green); margin-top: 30px; margin-bottom: 10px;">تم الإنجاز بنجاح!</h2>
         <h3 id="finalName" style="color: #fff;"></h3>
         <div id="finalScore" style="font-size:2.5rem; color:var(--blue); font-family: 'Orbitron'; margin: 15px 0;"></div>
         <p id="detailedStats" style="font-size: 1rem; background: rgba(255,255,255,0.1); padding: 10px; border-radius: 12px;"></p>
         <div style="display:grid; grid-template-columns: 1fr; gap:10px; margin-top:20px; width:100%;">
             <button id="submitBtn" class="btn" onclick="sendResult()">
-                <span class="alert-icon">⚠️</span>📩 إرسال النتيجة للمعلم
+                <span class="alert-icon">⚠️</span> 📩 إرسال النتيجة للمعلم
             </button>
             <button class="btn" style="background:#444" onclick="generateReportImage()">📸 حفظ التقرير</button>
             <button class="btn" style="background:#25D366" onclick="sendWhatsApp()">💬 واتساب المعلم</button>
@@ -198,10 +200,8 @@
                     managerName = allData[0]['المدير'] || "...";
                     teacherName = allData[0]['المعلم'] || "...";
                     teacherPhone = allData[0]['الهاتف'] || "";
-                    
                     let countValue = allData[0]['العداد'] || 0;
                     document.getElementById('v-count').innerText = countValue.toString().padStart(4, '0');
-
                     document.getElementById('ui-school-name').innerText = schoolName;
                     document.getElementById('ui-manager-name').innerText = "المدير: " + managerName;
                     document.getElementById('ui-teacher-name').innerText = "المعلم: " + teacherName;
@@ -234,7 +234,6 @@
         const lookup = (studentLevel.includes("سادس")) ? "سادس" : studentLevel;
         const qs = allData.filter(q => q['المختبر'] === currentLab && q['الصف'] === lookup && q['السؤال']);
         totalQs = qs.length;
-        document.getElementById('dashboard').style.display = 'none';
         document.getElementById('tabs-container').style.display = 'none';
         document.getElementById('quiz-area').style.display = 'block';
         loadQuestion(0);
@@ -282,7 +281,7 @@
         formData.append('entry.1149023992', resultText);
         try {
             await fetch(FORM_URL, { method: 'POST', mode: 'no-cors', body: formData });
-            sBtn.innerText = "تم الإرسال بنجاح ✅"; sBtn.style.background = "var(--green)";
+            sBtn.innerHTML = "تم الإرسال بنجاح ✅"; sBtn.style.background = "var(--green)";
             setTimeout(fetchData, 2000); 
         } catch (e) { alert("حدث خطأ في الإرسال"); sBtn.disabled = false; }
     }
