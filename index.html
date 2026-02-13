@@ -34,7 +34,7 @@
         .dashboard-bar { display: flex; justify-content: center; align-items: center; gap: 10px; padding: 10px; background: rgba(0,0,0,0.4); border-bottom: 1px solid rgba(0, 243, 255, 0.2); flex-wrap: wrap; width: 100%; }
         .stat-item { background: rgba(0,0,0,0.6); padding: 5px 12px; border-radius: 15px; border: 1px solid var(--blue); display: flex; align-items: center; gap: 8px; font-size: 0.8rem; color: #fff; }
         
-        .status-dot { width: 10px; height: 10px; border-radius: 50%; background: #888; }
+        .status-dot { width: 100%; width: 10px; height: 10px; border-radius: 50%; background: #888; }
         .status-online { background: var(--green); box-shadow: 0 0 12px var(--green); animation: blink 1.5s infinite; }
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
 
@@ -77,7 +77,7 @@
 </head>
 <body>
 
-<button class="refresh-btn" onclick="triggerGlobalCount()">🔄 تحديث</button>
+<button class="refresh-btn" onclick="location.reload()">🔄 تحديث</button>
 <div class="space-bg"></div>
 
 <div class="school-header">
@@ -94,7 +94,7 @@
         <span id="status-text">فحص الاتصال</span>
     </div>
     <div class="stat-item">
-        <span>الزوار:</span>
+        <span>نتائج مرسلة:</span>
         <span id="v-count" style="color:var(--blue); font-family:'Orbitron'">0000</span>
     </div>
     <div class="stat-item">
@@ -115,7 +115,7 @@
             <option value="اول متوسط">اول متوسط</option>
             <option value="ثاني متوسط">ثاني متوسط</option>
         </select>
-        <button class="btn" onclick="startAppWithCount()">انطلق للمختبر 🚀</button>
+        <button class="btn" onclick="startApp()">انطلق للمختبر 🚀</button>
     </div>
 
     <div id="tabs-container" class="card">
@@ -163,7 +163,9 @@
 <script>
     const SHEET_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQoDltg5gz2B-6xfejx4s0Rm-EtYaWjwGII5P8Wk4OEh-o3dpYBy9V_2udC1SLD89tSQFFD88Pqd0Ms/pub?gid=0&single=true&output=csv';
     const FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSd6qV0wUZIOTA3maN-KuBBhzivjeF0lCYD37-Ecr4FErVu6Xw/formResponse';
-    const COUNTER_API = 'https://api.countapi.xyz/hit/sci-lab-saudi-school-2026/visits'; // معرف فريد للمدرسة
+    
+    // معرف العداد العالمي المرتبط بالنتائج
+    const COUNTER_ID = 'sci_lab_results_total_v1';
 
     let allData = [], studentName = "", studentLevel = "", correctCount = 0, wrongCount = 0, totalQs = 0, currentLab = "";
     let teacherName = "", managerName = "", schoolName = "", teacherPhone = "";
@@ -172,45 +174,28 @@
     window.onload = () => {
         fetchData();
         updateOnlineStatus();
-        getGlobalCount(); // جلب العدد الحالي عند الفتح دون زيادة
+        getGlobalCount(); // جلب عدد النتائج عند فتح الموقع
         setInterval(() => {
-            document.getElementById('active-count').innerText = Math.floor(Math.random() * 5) + 1;
+            document.getElementById('active-count').innerText = Math.floor(Math.random() * 8) + 1;
         }, 10000);
     };
 
-    // --- وظائف العداد العالمي الجديد ---
+    // دالة جلب الرقم العالمي من السيرفر
     async function getGlobalCount() {
         try {
-            // نستخدم معرف ثابت للمدرسة لضمان توحد الرقم
-            const res = await fetch('https://api.mojotv.cn/api/v1/count?id=sci_lab_school_unique_id');
+            const res = await fetch(`https://api.mojotv.cn/api/v1/count?id=${COUNTER_ID}`);
             const data = await res.json();
             document.getElementById('v-count').innerText = (data.data || 0).toString().padStart(4, '0');
         } catch (e) { console.log("Counter error"); }
     }
 
-    async function triggerGlobalCount() {
-        // زيادة الرقم العالمي ثم تحديث الصفحة
+    // دالة زيادة العداد فقط عند الإرسال الناجح
+    async function incrementGlobalCount() {
         try {
-            await fetch('https://api.mojotv.cn/api/v1/count?id=sci_lab_school_unique_id');
-        } finally {
-            location.reload();
-        }
+            await fetch(`https://api.mojotv.cn/api/v1/count?id=${COUNTER_ID}`);
+            getGlobalCount(); // تحديث الرقم المعروض فوراً
+        } catch (e) { console.log("Update counter error"); }
     }
-
-    async function startAppWithCount() {
-        studentName = document.getElementById('stdName').value;
-        studentLevel = document.getElementById('stdLevel').value;
-        if(!studentName || !studentLevel) return alert("سجل بياناتك أولاً!");
-        
-        // زيادة الرقم العالمي عند الضغط على انطلق
-        try { fetch('https://api.mojotv.cn/api/v1/count?id=sci_lab_school_unique_id'); } catch(e){}
-        
-        document.getElementById('login-screen').style.display = 'none';
-        document.getElementById('tabs-container').style.display = 'block';
-        document.getElementById('welcome-msg').innerText = `أهلاً بك يا ${studentName}`;
-        renderLabs();
-    }
-    // --------------------------------
 
     function updateOnlineStatus() {
         const dot = document.getElementById('status-dot');
@@ -237,6 +222,17 @@
                 document.getElementById('ui-teacher-name').innerText = "المعلم: " + teacherName;
             }
         }});
+    }
+
+    function startApp() {
+        studentName = document.getElementById('stdName').value;
+        studentLevel = document.getElementById('stdLevel').value;
+        if(!studentName || !studentLevel) return alert("سجل بياناتك أولاً!");
+        
+        document.getElementById('login-screen').style.display = 'none';
+        document.getElementById('tabs-container').style.display = 'block';
+        document.getElementById('welcome-msg').innerText = `أهلاً بك يا ${studentName}`;
+        renderLabs();
     }
 
     function renderLabs() {
@@ -301,7 +297,12 @@
         formData.append('entry.1149023992', resultText);
         try {
             await fetch(FORM_URL, { method: 'POST', mode: 'no-cors', body: formData });
-            sBtn.innerText = "تم الإرسال بنجاح ✅"; sBtn.style.background = "var(--green)";
+            sBtn.innerText = "تم الإرسال بنجاح ✅"; 
+            sBtn.style.background = "var(--green)";
+            
+            // هنا يتم زيادة العداد العالمي فقط بعد نجاح الإرسال
+            incrementGlobalCount(); 
+            
         } catch (e) { alert("حدث خطأ في الإرسال"); sBtn.disabled = false; }
     }
 
