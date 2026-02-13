@@ -26,17 +26,27 @@
         .astronaut { width: 110px; margin-bottom: 20px; filter: drop-shadow(0 0 15px var(--blue)); animation: float 3s ease-in-out infinite; }
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
         
-        .refresh-btn { position: fixed; top: 12px; left: 12px; z-index: 2000; background: rgba(255,255,255,0.1); border: 1px solid var(--blue); color: #fff; padding: 6px 10px; border-radius: 10px; cursor: pointer; backdrop-filter: blur(5px); font-size: 12px; }
-        
+        /* زر التحديث في الزاوية العلوية اليسرى */
+        .refresh-btn { 
+            position: fixed; top: 15px; left: 15px; z-index: 2500; 
+            background: rgba(0, 243, 255, 0.2); border: 1px solid var(--blue); 
+            color: #fff; padding: 8px 15px; border-radius: 12px; 
+            cursor: pointer; backdrop-filter: blur(5px); font-size: 14px;
+            font-family: 'Cairo', sans-serif; display: flex; align-items: center; gap: 5px;
+        }
+
         .school-header { position: relative; text-align: center; padding: 15px; background: rgba(0,0,0,0.85); backdrop-filter: blur(15px); border-bottom: 2px solid var(--blue); z-index: 1500; width: 100%; }
         .glowing-title { font-family: 'Orbitron', sans-serif; text-shadow: 0 0 15px var(--blue); font-size: 1.2rem; margin: 0; }
 
         .dashboard-bar { display: flex; justify-content: center; align-items: center; gap: 10px; padding: 10px; background: rgba(0,0,0,0.4); border-bottom: 1px solid rgba(0, 243, 255, 0.2); flex-wrap: wrap; width: 100%; }
         .stat-item { background: rgba(0,0,0,0.6); padding: 5px 12px; border-radius: 15px; border: 1px solid var(--blue); display: flex; align-items: center; gap: 8px; font-size: 0.8rem; color: #fff; }
         
+        /* تأثير الوميض للنتائج والمتواجدون */
+        .blink-stat { animation: blinker 1.5s linear infinite; }
+        @keyframes blinker { 50% { opacity: 0.3; } }
+
         .status-dot { width: 10px; height: 10px; border-radius: 50%; background: #888; }
-        .status-online { background: var(--green); box-shadow: 0 0 12px var(--green); animation: blink 1.5s infinite; }
-        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+        .status-online { background: var(--green); box-shadow: 0 0 12px var(--green); }
 
         .main-wrapper { flex: 1; display: flex; align-items: center; justify-content: center; z-index: 5; padding: 20px; width: 100%; }
         
@@ -45,20 +55,22 @@
             padding: 40px 20px; border-radius: 35px; border: 2px solid var(--blue); 
             text-align: center; width: 100%; max-width: 450px; 
             box-shadow: 0 0 40px rgba(0, 243, 255, 0.2); 
-            margin: auto;
-            display: flex; flex-direction: column; align-items: center;
+            margin: auto; display: flex; flex-direction: column; align-items: center;
         }
 
         .input-style { 
-            width: 90%; 
-            padding: 14px; border-radius: 12px; border: 2px solid var(--blue); 
+            width: 90%; padding: 14px; border-radius: 12px; border: 2px solid var(--blue); 
             background: rgba(0,0,0,0.6); color: #fff; text-align: center; 
             font-size: 1rem; margin-bottom: 15px; outline: none; 
         }
 
-        .btn { background: var(--purple); color: #fff; border: none; padding: 14px 20px; border-radius: 15px; cursor: pointer; font-weight: bold; transition: 0.3s; font-size: 1.1rem; width: 90%; }
+        .btn { background: var(--purple); color: #fff; border: none; padding: 14px 20px; border-radius: 15px; cursor: pointer; font-weight: bold; transition: 0.3s; font-size: 1.1rem; width: 90%; position: relative; }
         .btn:hover { background: var(--blue); color: #000; box-shadow: 0 0 20px var(--blue); }
         
+        /* رمز التنبيه الوامض داخل الزر */
+        .alert-icon { color: yellow; animation: icon-blink 0.8s infinite; margin-left: 8px; }
+        @keyframes icon-blink { 0%, 100% { opacity: 1; transform: scale(1.1); } 50% { opacity: 0; transform: scale(0.9); } }
+
         .option { background: rgba(255,255,255,0.05); padding: 15px; margin: 10px 0; border-radius: 18px; cursor: pointer; text-align: right; border: 1px solid rgba(0,243,255,0.2); width: 100%; transition: 0.2s; }
         .correct { background: var(--green) !important; color: #000 !important; font-weight: bold; }
         .wrong { background: var(--pink) !important; color: #fff !important; }
@@ -71,7 +83,6 @@
         @media (max-width: 600px) {
             .card { width: 95%; padding: 25px 15px; }
             .glowing-title { font-size: 1rem !important; }
-            .school-header { padding: 10px 5px; }
         }
     </style>
 </head>
@@ -90,14 +101,14 @@
 
 <div id="dashboard" class="dashboard-bar">
     <div class="stat-item">
-        <span id="status-dot" class="status-dot"></span>
-        <span id="status-text">فحص الاتصال</span>
+        <span id="status-dot" class="status-dot status-online"></span>
+        <span id="status-text">متصل</span>
     </div>
-    <div class="stat-item">
+    <div class="stat-item blink-stat">
         <span>نتائج مرسلة:</span>
         <span id="v-count" style="color:var(--blue); font-family:'Orbitron'">0000</span>
     </div>
-    <div class="stat-item">
+    <div class="stat-item blink-stat">
         <span>المتواجدون:</span>
         <span id="active-count" style="color:var(--green); font-family:'Orbitron'">1</span>
     </div>
@@ -139,7 +150,9 @@
         <div id="finalScore" style="font-size:2.5rem; color:var(--blue); font-family: 'Orbitron'; margin: 15px 0;"></div>
         <p id="detailedStats" style="font-size: 1rem; background: rgba(255,255,255,0.1); padding: 10px; border-radius: 12px;"></p>
         <div style="display:grid; grid-template-columns: 1fr; gap:10px; margin-top:20px; width:100%;">
-            <button id="submitBtn" class="btn" onclick="sendResult()">📩 إرسال النتيجة للمعلم</button>
+            <button id="submitBtn" class="btn" onclick="sendResult()">
+                <span class="alert-icon">⚠️</span>📩 إرسال النتيجة للمعلم
+            </button>
             <button class="btn" style="background:#444" onclick="generateReportImage()">📸 حفظ التقرير</button>
             <button class="btn" style="background:#25D366" onclick="sendWhatsApp()">💬 واتساب المعلم</button>
         </div>
@@ -161,7 +174,6 @@
 <audio id="sound-win" src="https://assets.mixkit.co/active_storage/sfx/1435/1435-preview.mp3"></audio>
 
 <script>
-    // رابط CSV الخاص بالأسئلة والبيانات
     const SHEET_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQoDltg5gz2B-6xfejx4s0Rm-EtYaWjwGII5P8Wk4OEh-o3dpYBy9V_2udC1SLD89tSQFFD88Pqd0Ms/pub?gid=0&single=true&output=csv';
     const FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSd6qV0wUZIOTA3maN-KuBBhzivjeF0lCYD37-Ecr4FErVu6Xw/formResponse';
 
@@ -171,41 +183,23 @@
 
     window.onload = () => {
         fetchData();
-        updateOnlineStatus();
-        // عشوائية عدد المتواجدين لإعطاء حياة للموقع
         setInterval(() => {
             document.getElementById('active-count').innerText = Math.floor(Math.random() * 5) + 1;
-        }, 10000);
+        }, 8000);
     };
-
-    function updateOnlineStatus() {
-        const dot = document.getElementById('status-dot');
-        const txt = document.getElementById('status-text');
-        if (navigator.onLine) {
-            dot.className = 'status-dot status-online';
-            txt.innerText = 'متصل';
-        } else {
-            dot.className = 'status-dot';
-            txt.innerText = 'غير متصل';
-        }
-    }
 
     function fetchData() {
         Papa.parse(SHEET_CSV, { 
-            download: true, 
-            header: true, 
+            download: true, header: true, 
             complete: (res) => {
                 allData = res.data;
                 if(allData.length > 0) {
-                    // قراءة البيانات الأساسية
                     schoolName = allData[0]['المدرسة'] || "المعمل العلمي";
                     managerName = allData[0]['المدير'] || "...";
                     teacherName = allData[0]['المعلم'] || "...";
                     teacherPhone = allData[0]['الهاتف'] || "";
                     
-                    // قراءة العداد من عمود يسمى "العداد" في الجدول
-                    // إذا لم يجد العمود، سيقوم بحساب عدد الأسطر التي تحتوي على أسئلة كحل مؤقت
-                    let countValue = allData[0]['العداد'] || allData.filter(x => x['المختبر']).length;
+                    let countValue = allData[0]['العداد'] || 0;
                     document.getElementById('v-count').innerText = countValue.toString().padStart(4, '0');
 
                     document.getElementById('ui-school-name').innerText = schoolName;
@@ -220,7 +214,6 @@
         studentName = document.getElementById('stdName').value;
         studentLevel = document.getElementById('stdLevel').value;
         if(!studentName || !studentLevel) return alert("سجل بياناتك أولاً!");
-        
         document.getElementById('login-screen').style.display = 'none';
         document.getElementById('tabs-container').style.display = 'block';
         document.getElementById('welcome-msg').innerText = `أهلاً بك يا ${studentName}`;
@@ -231,7 +224,6 @@
         let lookup = (studentLevel.includes("سادس")) ? "سادس" : studentLevel;
         const labs = [...new Set(allData.filter(q => q['الصف'] && q['الصف'].trim() === lookup).map(q => q['المختبر'].trim()))];
         const div = document.getElementById('tabs'); div.innerHTML = "";
-        
         labs.forEach(l => {
             div.innerHTML += `<button class="btn" style="background:rgba(255,255,255,0.05); border:1px solid var(--blue);" onclick="startQuiz('${l}')">${l}</button>`;
         });
@@ -242,7 +234,6 @@
         const lookup = (studentLevel.includes("سادس")) ? "سادس" : studentLevel;
         const qs = allData.filter(q => q['المختبر'] === currentLab && q['الصف'] === lookup && q['السؤال']);
         totalQs = qs.length;
-        
         document.getElementById('dashboard').style.display = 'none';
         document.getElementById('tabs-container').style.display = 'none';
         document.getElementById('quiz-area').style.display = 'block';
@@ -252,36 +243,21 @@
     function loadQuestion(idx) {
         const lookup = (studentLevel.includes("سادس")) ? "سادس" : studentLevel;
         const qs = allData.filter(q => q['المختبر'] === currentLab && q['الصف'] === lookup && q['السؤال']);
-        
         if(idx >= qs.length) return showResult();
-        
         const q = qs[idx];
         document.getElementById('qCounter').innerText = `${idx+1} / ${qs.length}`;
         document.getElementById('qText').innerText = q['السؤال'];
-        
         const imgEl = document.getElementById('questionImg');
-        if(q['الصورة']) {
-            imgEl.src = q['الصورة'];
-            imgEl.style.display = 'block';
-        } else {
-            imgEl.style.display = 'none';
-        }
-        
+        if(q['الصورة']) { imgEl.src = q['الصورة']; imgEl.style.display = 'block'; } else { imgEl.style.display = 'none'; }
         const opts = [q['الإجابة الصحيحة'], q['إجابة خاطئة']].sort(() => Math.random() - 0.5);
         const container = document.getElementById('optionsContainer'); container.innerHTML = "";
-        
         opts.forEach(o => {
             const div = document.createElement('div'); div.className = 'option'; div.innerText = o;
             div.onclick = () => {
                 const isCorrect = (o === q['الإجابة الصحيحة']);
                 userAnswers.push({ q: q['السؤال'], user: o, correct: q['الإجابة الصحيحة'], status: isCorrect });
-                if(isCorrect) {
-                    div.classList.add('correct'); correctCount++;
-                    document.getElementById('sound-correct').play();
-                } else {
-                    div.classList.add('wrong'); wrongCount++;
-                    document.getElementById('sound-wrong').play();
-                }
+                if(isCorrect) { div.classList.add('correct'); correctCount++; document.getElementById('sound-correct').play(); } 
+                else { div.classList.add('wrong'); wrongCount++; document.getElementById('sound-wrong').play(); }
                 setTimeout(() => loadQuestion(idx+1), 600);
             };
             container.appendChild(div);
@@ -299,22 +275,16 @@
 
     async function sendResult() {
         const sBtn = document.getElementById('submitBtn');
-        sBtn.innerText = "جاري الإرسال...";
-        sBtn.disabled = true;
+        sBtn.innerHTML = "جاري الإرسال..."; sBtn.disabled = true;
         const resultText = `الدرجة: ${correctCount}/${totalQs} | الصف: ${studentLevel} | المختبر: ${currentLab}`;
         const formData = new FormData();
         formData.append('entry.851707482', studentName);
         formData.append('entry.1149023992', resultText);
         try {
             await fetch(FORM_URL, { method: 'POST', mode: 'no-cors', body: formData });
-            sBtn.innerText = "تم الإرسال بنجاح ✅";
-            sBtn.style.background = "var(--green)";
-            // بعد الإرسال، نقوم بتحديث البيانات لجلب العداد الجديد من الجدول
+            sBtn.innerText = "تم الإرسال بنجاح ✅"; sBtn.style.background = "var(--green)";
             setTimeout(fetchData, 2000); 
-        } catch (e) {
-            alert("حدث خطأ في الإرسال");
-            sBtn.disabled = false;
-        }
+        } catch (e) { alert("حدث خطأ في الإرسال"); sBtn.disabled = false; }
     }
 
     function generateReportImage() {
@@ -322,8 +292,7 @@
         document.getElementById('rep-name').innerText = studentName;
         document.getElementById('rep-level').innerText = studentLevel;
         document.getElementById('rep-score').innerText = `النتيجة: ${correctCount} / ${totalQs}`;
-        const list = document.getElementById('rep-questions-list');
-        list.innerHTML = "";
+        const list = document.getElementById('rep-questions-list'); list.innerHTML = "";
         userAnswers.forEach((item, i) => {
             list.innerHTML += `<div style="border-bottom:1px solid #333; padding:10px; text-align:right;"><b>${i+1}: ${item.q}</b><br>إجابتك: ${item.user} ${item.status ? '✅' : '❌'}</div>`;
         });
