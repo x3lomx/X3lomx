@@ -42,10 +42,9 @@
             text-align: center; width: 100%; max-width: 450px; 
             box-shadow: 0 0 40px rgba(0, 243, 255, 0.2); 
             margin: auto; display: flex; flex-direction: column; align-items: center;
-            position: relative; /* لجعل زر التحديث يثبت داخله */
+            position: relative;
         }
 
-        /* زر التحديث الجديد داخل القائمة بالزاوية العلوية اليسرى */
         .card-refresh-btn {
             position: absolute; top: 15px; left: 15px;
             background: rgba(255,255,255,0.1); border: 1px solid var(--blue);
@@ -62,7 +61,6 @@
         .btn { background: var(--purple); color: #fff; border: none; padding: 14px 20px; border-radius: 15px; cursor: pointer; font-weight: bold; transition: 0.3s; font-size: 1.1rem; width: 90%; display: flex; align-items: center; justify-content: center; gap: 8px; }
         .btn:hover { background: var(--blue); color: #000; box-shadow: 0 0 20px var(--blue); }
         
-        /* رمز التنبيه الوامض المحدث ليعمل على الجوال والكمبيوتر */
         .alert-icon { 
             display: inline-block;
             color: #ffff00; 
@@ -75,7 +73,7 @@
             100% { opacity: 1; } 
         }
 
-        .option { background: rgba(255,255,255,0.05); padding: 15px; margin: 10px 0; border-radius: 18px; cursor: pointer; text-align: right; border: 1px solid rgba(0,243,255,0.2); width: 100%; transition: 0.2s; }
+        .option { background: rgba(255,255,255,0.05); padding: 12px; margin: 8px 0; border-radius: 15px; cursor: pointer; text-align: right; border: 1px solid rgba(0,243,255,0.2); width: 100%; transition: 0.2s; font-size: 0.95rem; }
         .correct { background: var(--green) !important; color: #000 !important; font-weight: bold; }
         .wrong { background: var(--pink) !important; color: #fff !important; }
 
@@ -248,16 +246,43 @@
         document.getElementById('qText').innerText = q['السؤال'];
         const imgEl = document.getElementById('questionImg');
         if(q['الصورة']) { imgEl.src = q['الصورة']; imgEl.style.display = 'block'; } else { imgEl.style.display = 'none'; }
-        const opts = [q['الإجابة الصحيحة'], q['إجابة خاطئة']].sort(() => Math.random() - 0.5);
+        
+        // --- التعديل المطلوب: تقسيم خلية الإجابات الخاطئة عن طريق الفاصلة ---
+        let wrongAnswersArray = [];
+        if (q['إجابة خاطئة']) {
+            // تقسيم النص عند كل فاصلة (سواء كانت , أو ،) وتجنيب المساحات الفارغة
+            wrongAnswersArray = q['إجابة خاطئة'].split(/,|،/).map(item => item.trim()).filter(item => item !== "");
+        }
+
+        // دمج الإجابة الصحيحة مع قائمة الإجابات الخاطئة الناتجة عن التقسيم
+        let opts = [q['الإجابة الصحيحة'], ...wrongAnswersArray];
+        
+        // التأكد من أن الإجمالي 4 خيارات بحد أقصى (أو حسب المكتوب في الخلية)
+        opts = opts.slice(0, 4).sort(() => Math.random() - 0.5); 
+        
         const container = document.getElementById('optionsContainer'); container.innerHTML = "";
         opts.forEach(o => {
             const div = document.createElement('div'); div.className = 'option'; div.innerText = o;
             div.onclick = () => {
                 const isCorrect = (o === q['الإجابة الصحيحة']);
                 userAnswers.push({ q: q['السؤال'], user: o, correct: q['الإجابة الصحيحة'], status: isCorrect });
-                if(isCorrect) { div.classList.add('correct'); correctCount++; document.getElementById('sound-correct').play(); } 
-                else { div.classList.add('wrong'); wrongCount++; document.getElementById('sound-wrong').play(); }
-                setTimeout(() => loadQuestion(idx+1), 600);
+                
+                const allOptions = container.querySelectorAll('.option');
+                allOptions.forEach(opt => opt.style.pointerEvents = 'none');
+
+                if(isCorrect) { 
+                    div.classList.add('correct'); 
+                    correctCount++; 
+                    document.getElementById('sound-correct').play(); 
+                } else { 
+                    div.classList.add('wrong'); 
+                    wrongCount++; 
+                    document.getElementById('sound-wrong').play(); 
+                    allOptions.forEach(opt => {
+                        if(opt.innerText === q['الإجابة الصحيحة']) opt.classList.add('correct');
+                    });
+                }
+                setTimeout(() => loadQuestion(idx+1), 800);
             };
             container.appendChild(div);
         });
