@@ -10,7 +10,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Cairo:wght@400;700&display=swap" rel="stylesheet">
     
     <style>
-        /* التنسيقات الأصلية كما هي بدون تغيير */
         * { box-sizing: border-box; }
         :root { --blue: #00f3ff; --purple: #bc13fe; --bg: #05070a; --green: #39ff14; --pink: #ff0055; }
         body, html { height: 100%; margin: 0; padding: 0; background: var(--bg); color: #fff; font-family: 'Cairo', sans-serif; overflow-x: hidden; display: flex; flex-direction: column; width: 100%; }
@@ -82,7 +81,7 @@
             <span id="timerText" style="color:var(--pink); font-family: 'Orbitron'; font-weight: bold;">30s</span>
             <span id="qCounter" style="color:var(--blue); font-weight: bold;"></span>
         </div>
-        <img id="questionImg" class="q-image" style="display:none; max-width:100%; margin-bottom:15px; border-radius:15px; border:2px solid var(--blue);">
+        <img id="questionImg" style="display:none; max-width:100%; max-height:200px; border-radius:15px; margin-bottom:15px; border:2px solid var(--blue);">
         <h3 id="qText" style="margin-bottom: 20px; line-height: 1.5;"></h3>
         <div id="optionsContainer" style="width:100%;"></div>
     </div>
@@ -112,10 +111,15 @@
 </div>
 
 <script>
-    // نظام التعمية (Obfuscation) للروابط
-    const _0x51c2=["aHR0cHM6Ly9kb2NzLmdvb2dsZS5jb20vc3ByZWFkc2hlZXRzL2QvZS8yUEFDWC0xdlFvRGx0ZzVnejJCLTZ4ZmVqeDRzMFJtLUV0WWF3SndHSUlQUA4V2s0T0VoLW8zZHBZQnk5Vl8ydWRDMVNMODl0U1FGRkQ4OFBxZDBNcy9wdWI/Z2lkPTAmc2luZ2xlPXRydWUmb3V0cHV0PWNzdg==","aHR0cHM6Ly9kb2NzLmdvb2dsZS5mb3Jtcy9kL2UvMUZBSXBRTFNkNnZ3VVpJT1RBM21hTi1LdUJCaHppdmplRjBsQ1lEMzctRWNyNEZFclZ1Nlh3L2Zvcm1SZXNwb25zZQ=="];
-    const SHEET_CSV = atob(_0x51c2[0]);
-    const FORM_URL = atob(_0x51c2[1]);
+    // تم استخراج الروابط وتعميتها بنظام Base64 كما طلبت
+    const _0xData = [
+        "aHR0cHM6Ly9kb2NzLmdvb2dsZS5jb20vc3ByZWFkc2hlZXRzL2QvZS8yUEFDWC0xdlFvRGx0ZzVnejJCLTZ4ZmVqeDRzMFJtLUV0WWF3SndHSUlQUA4V2s0T0VoLW8zZHBZQnk5Vl8ydWRDMVNMODl0U1FGRkQ4OFBxZDBNcy9wdWI/Z2lkPTAmc2luZ2xlPXRydWUmb3V0cHV0PWNzdg==",
+        "aHR0cHM6Ly9kb2NzLmdvb2dsZS5mb3Jtcy9kL2UvMUZBSXBRTFNkNnV3VVpJT1RBM21hTi1LdUJCaHppdmplRjBsQ1lEMzctRWNyNEZFclZ1Nlh3L2Zvcm1SZXNwb25zZQ=="
+    ];
+
+    // فك التشفير عند التشغيل فقط
+    const SHEET_CSV = atob(_0xData[0]); 
+    const FORM_URL = atob(_0xData[1]); 
 
     let allData = [], studentName = "", studentLevel = "", correctCount = 0, wrongCount = 0, totalQs = 0, currentLab = "";
     let teacherName = "", managerName = "", schoolName = "", teacherPhone = "";
@@ -132,11 +136,11 @@
             complete: (res) => {
                 allData = res.data;
                 if(allData.length > 0) {
-                    // فحص وضع الصيانة
+                    // ميزة وضع الصيانة من عمود "صيانة"
                     let maintenance = allData[0]['صيانة'] || "لا";
                     if(maintenance.trim() === "نعم") {
-                        document.getElementById('login-form-area').innerHTML = "<h2 style='color:var(--pink)'>⚠️ المنصة في حالة صيانة حالياً، عد لاحقاً</h2>";
-                        document.getElementById('ui-school-name').innerText = "المنصة مغلقة للصيانة";
+                        document.getElementById('login-form-area').innerHTML = "<h2 style='color:var(--pink); padding:20px;'>⚠️ المعذرة.. المنصة في وضع الصيانة حالياً</h2>";
+                        document.getElementById('ui-school-name').innerText = "المختبر مغلق للصيانة";
                         return;
                     }
 
@@ -153,8 +157,6 @@
         });
     }
 
-    // باقي الوظائف (startApp, renderLabs, loadQuestion, showResult, sendResult...) 
-    // تم الإبقاء عليها كما هي تماماً لضمان عمل المنصة
     function startApp() {
         studentName = document.getElementById('stdName').value;
         studentLevel = document.getElementById('stdLevel').value;
