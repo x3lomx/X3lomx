@@ -118,7 +118,8 @@
         <input type="text" id="stdName" class="input-style" placeholder="أدخل اسمك يا بطل">
         <select id="stdLevel" class="input-style">
             <option value="" disabled selected>اختر صفك الدراسي</option>
-            <option value="سادس">سادس</option>
+            <option value="سادس أ">سادس أ</option>
+            <option value="سادس ب">سادس ب</option>
             <option value="اول متوسط">اول متوسط</option>
             <option value="ثاني متوسط">ثاني متوسط</option>
         </select>
@@ -134,7 +135,7 @@
     <div id="quiz-area" class="card">
         <button class="card-refresh-btn" onclick="location.reload()">🔄 تحديث</button>
         <div style="display:flex; justify-content: space-between; width:100%; margin-top: 30px; margin-bottom: 15px;">
-            <span id="timerText" style="color:var(--pink); font-family: 'Orbitron'; font-weight: bold; display:none;">--</span>
+            <span id="timerText" style="color:var(--pink); font-family: 'Orbitron'; font-weight: bold;">30s</span>
             <span id="qCounter" style="color:var(--blue); font-weight: bold;"></span>
         </div>
         <img id="questionImg" class="q-image" alt="Question">
@@ -179,6 +180,7 @@
     let allData = [], studentName = "", studentLevel = "", correctCount = 0, wrongCount = 0, totalQs = 0, currentLab = "";
     let teacherName = "", managerName = "", schoolName = "", teacherPhone = "";
     let userAnswers = [];
+    let timerInterval, timeLeft = 30;
 
     window.onload = () => {
         fetchData();
@@ -229,7 +231,8 @@
     function startQuiz(lab) {
         currentLab = lab; correctCount = 0; wrongCount = 0; userAnswers = [];
         const lookup = (studentLevel.includes("سادس")) ? "سادس" : studentLevel;
-        const qs = allData.filter(q => q['المختبر'] === currentLab && q['الصف'] === lookup && (q['السؤال'] || q['الصورة']));
+        const qs = allData.filter(q => q['المختبر'] === currentLab && q['الصف'] === lookup && q['السؤال']);
+        // استثناء صفحات الشرح من العدد الكلي للأسئلة في النتيجة
         const realQs = qs.filter(q => q['الإجابة الصحيحة'] !== 'استمر' && q['الإجابة الصحيحة'] !== 'ابدأ الاختبار');
         totalQs = realQs.length;
         document.getElementById('tabs-container').style.display = 'none';
@@ -238,27 +241,25 @@
     }
 
     function loadQuestion(idx) {
+        clearInterval(timerInterval);
         const lookup = (studentLevel.includes("سادس")) ? "سادس" : studentLevel;
-        const qs = allData.filter(q => q['المختبر'] === currentLab && q['الصف'] === lookup && (q['السؤال'] || q['الصورة']));
-        
+        const qs = allData.filter(q => q['المختبر'] === currentLab && q['الصف'] === lookup && q['السؤال']);
         if(idx >= qs.length) return showResult();
-
-        // سطر التحميل المسبق للسحر والسرعة
-        if (qs[idx + 1] && qs[idx + 1]['الصورة']) {
-            new Image().src = qs[idx + 1]['الصورة']; 
-        }
-
+        
         const q = qs[idx];
         const isEducational = (q['الإجابة الصحيحة'] === 'استمر' || q['الإجابة الصحيحة'] === 'ابدأ الاختبار');
         
+        // تحديث العداد
         if(isEducational) {
             document.getElementById('qCounter').innerText = "مرحلة الشرح";
+            document.getElementById('timerText').innerText = "--";
         } else {
             const currentRealIdx = qs.slice(0, idx+1).filter(item => item['الإجابة الصحيحة'] !== 'استمر' && item['الإجابة الصحيحة'] !== 'ابدأ الاختبار').length;
             document.getElementById('qCounter').innerText = `${currentRealIdx} / ${totalQs}`;
+            startTimer(idx);
         }
 
-        document.getElementById('qText').innerText = q['السؤال'] || "";
+        document.getElementById('qText').innerText = q['السؤال'];
         const imgEl = document.getElementById('questionImg');
         if(q['الصورة']) { imgEl.src = q['الصورة']; imgEl.style.display = 'block'; } else { imgEl.style.display = 'none'; }
         
@@ -271,25 +272,43 @@
             const div = document.createElement('div'); div.className = 'option'; div.innerText = o;
             div.onclick = () => {
                 if(o === 'السابق' && idx > 0) return loadQuestion(idx - 1);
+                
                 const isCorrect = (o === q['الإجابة الصحيحة']);
+                
                 if(!isEducational) {
                     userAnswers.push({ q: q['السؤال'], user: o, correct: q['الإجابة الصحيحة'], status: isCorrect });
                     if(isCorrect) { correctCount++; document.getElementById('sound-correct').play(); } 
                     else { wrongCount++; document.getElementById('sound-wrong').play(); }
                 }
+
                 const allOptions = container.querySelectorAll('.option');
                 allOptions.forEach(opt => opt.style.pointerEvents = 'none');
                 div.classList.add(isCorrect ? 'correct' : 'wrong');
                 if(!isCorrect && !isEducational) {
                     allOptions.forEach(opt => { if(opt.innerText === q['الإجابة الصحيحة']) opt.classList.add('correct'); });
                 }
-                setTimeout(() => loadQuestion(idx+1), 400); // تقليل وقت الانتقال لسرعة أكبر
+                
+                setTimeout(() => loadQuestion(idx+1), 800);
             };
             container.appendChild(div);
         });
     }
 
+    function startTimer(idx) {
+        timeLeft = 30;
+        document.getElementById('timerText').innerText = timeLeft + "s";
+        timerInterval = setInterval(() => {
+            timeLeft--;
+            document.getElementById('timerText').innerText = timeLeft + "s";
+            if(timeLeft <= 0) {
+                clearInterval(timerInterval);
+                loadQuestion(idx + 1);
+            }
+        }, 1000);
+    }
+
     function showResult() {
+        clearInterval(timerInterval);
         document.getElementById('quiz-area').style.display = 'none';
         document.getElementById('result-screen').style.display = 'block';
         document.getElementById('sound-win').play();
