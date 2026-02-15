@@ -180,6 +180,7 @@
     let allData = [], studentName = "", studentLevel = "", correctCount = 0, wrongCount = 0, totalQs = 0, currentLab = "";
     let teacherName = "", managerName = "", schoolName = "", teacherPhone = "";
     let userAnswers = [];
+    let timerInterval, timeLeft = 30;
 
     window.onload = () => {
         fetchData();
@@ -231,64 +232,83 @@
         currentLab = lab; correctCount = 0; wrongCount = 0; userAnswers = [];
         const lookup = (studentLevel.includes("سادس")) ? "سادس" : studentLevel;
         const qs = allData.filter(q => q['المختبر'] === currentLab && q['الصف'] === lookup && q['السؤال']);
-        totalQs = qs.length;
+        // استثناء صفحات الشرح من العدد الكلي للأسئلة في النتيجة
+        const realQs = qs.filter(q => q['الإجابة الصحيحة'] !== 'استمر' && q['الإجابة الصحيحة'] !== 'ابدأ الاختبار');
+        totalQs = realQs.length;
         document.getElementById('tabs-container').style.display = 'none';
         document.getElementById('quiz-area').style.display = 'block';
         loadQuestion(0);
     }
 
     function loadQuestion(idx) {
+        clearInterval(timerInterval);
         const lookup = (studentLevel.includes("سادس")) ? "سادس" : studentLevel;
         const qs = allData.filter(q => q['المختبر'] === currentLab && q['الصف'] === lookup && q['السؤال']);
         if(idx >= qs.length) return showResult();
+        
         const q = qs[idx];
-        document.getElementById('qCounter').innerText = `${idx+1} / ${qs.length}`;
+        const isEducational = (q['الإجابة الصحيحة'] === 'استمر' || q['الإجابة الصحيحة'] === 'ابدأ الاختبار');
+        
+        // تحديث العداد
+        if(isEducational) {
+            document.getElementById('qCounter').innerText = "مرحلة الشرح";
+            document.getElementById('timerText').innerText = "--";
+        } else {
+            const currentRealIdx = qs.slice(0, idx+1).filter(item => item['الإجابة الصحيحة'] !== 'استمر' && item['الإجابة الصحيحة'] !== 'ابدأ الاختبار').length;
+            document.getElementById('qCounter').innerText = `${currentRealIdx} / ${totalQs}`;
+            startTimer(idx);
+        }
+
         document.getElementById('qText').innerText = q['السؤال'];
         const imgEl = document.getElementById('questionImg');
         if(q['الصورة']) { imgEl.src = q['الصورة']; imgEl.style.display = 'block'; } else { imgEl.style.display = 'none'; }
         
-        // --- التعديل المطلوب: تقسيم خلية الإجابات الخاطئة عن طريق الفاصلة ---
-        let wrongAnswersArray = [];
-        if (q['إجابة خاطئة']) {
-            // تقسيم النص عند كل فاصلة (سواء كانت , أو ،) وتجنيب المساحات الفارغة
-            wrongAnswersArray = q['إجابة خاطئة'].split(/,|،/).map(item => item.trim()).filter(item => item !== "");
-        }
-
-        // دمج الإجابة الصحيحة مع قائمة الإجابات الخاطئة الناتجة عن التقسيم
+        let wrongAnswersArray = q['إجابة خاطئة'] ? q['إجابة خاطئة'].split(/,|،/).map(item => item.trim()).filter(i => i !== "") : [];
         let opts = [q['الإجابة الصحيحة'], ...wrongAnswersArray];
-        
-        // التأكد من أن الإجمالي 4 خيارات بحد أقصى (أو حسب المكتوب في الخلية)
-        opts = opts.slice(0, 4).sort(() => Math.random() - 0.5); 
+        if(!isEducational) opts = opts.slice(0, 4).sort(() => Math.random() - 0.5); 
         
         const container = document.getElementById('optionsContainer'); container.innerHTML = "";
         opts.forEach(o => {
             const div = document.createElement('div'); div.className = 'option'; div.innerText = o;
             div.onclick = () => {
-                const isCorrect = (o === q['الإجابة الصحيحة']);
-                userAnswers.push({ q: q['السؤال'], user: o, correct: q['الإجابة الصحيحة'], status: isCorrect });
+                if(o === 'السابق' && idx > 0) return loadQuestion(idx - 1);
                 
+                const isCorrect = (o === q['الإجابة الصحيحة']);
+                
+                if(!isEducational) {
+                    userAnswers.push({ q: q['السؤال'], user: o, correct: q['الإجابة الصحيحة'], status: isCorrect });
+                    if(isCorrect) { correctCount++; document.getElementById('sound-correct').play(); } 
+                    else { wrongCount++; document.getElementById('sound-wrong').play(); }
+                }
+
                 const allOptions = container.querySelectorAll('.option');
                 allOptions.forEach(opt => opt.style.pointerEvents = 'none');
-
-                if(isCorrect) { 
-                    div.classList.add('correct'); 
-                    correctCount++; 
-                    document.getElementById('sound-correct').play(); 
-                } else { 
-                    div.classList.add('wrong'); 
-                    wrongCount++; 
-                    document.getElementById('sound-wrong').play(); 
-                    allOptions.forEach(opt => {
-                        if(opt.innerText === q['الإجابة الصحيحة']) opt.classList.add('correct');
-                    });
+                div.classList.add(isCorrect ? 'correct' : 'wrong');
+                if(!isCorrect && !isEducational) {
+                    allOptions.forEach(opt => { if(opt.innerText === q['الإجابة الصحيحة']) opt.classList.add('correct'); });
                 }
+                
                 setTimeout(() => loadQuestion(idx+1), 800);
             };
             container.appendChild(div);
         });
     }
 
+    function startTimer(idx) {
+        timeLeft = 30;
+        document.getElementById('timerText').innerText = timeLeft + "s";
+        timerInterval = setInterval(() => {
+            timeLeft--;
+            document.getElementById('timerText').innerText = timeLeft + "s";
+            if(timeLeft <= 0) {
+                clearInterval(timerInterval);
+                loadQuestion(idx + 1);
+            }
+        }, 1000);
+    }
+
     function showResult() {
+        clearInterval(timerInterval);
         document.getElementById('quiz-area').style.display = 'none';
         document.getElementById('result-screen').style.display = 'block';
         document.getElementById('sound-win').play();
