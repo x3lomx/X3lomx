@@ -61,6 +61,10 @@
         .btn { background: var(--purple); color: #fff; border: none; padding: 14px 20px; border-radius: 15px; cursor: pointer; font-weight: bold; transition: 0.3s; font-size: 1.1rem; width: 90%; display: flex; align-items: center; justify-content: center; gap: 8px; }
         .btn:hover { background: var(--blue); color: #000; box-shadow: 0 0 20px var(--blue); }
         
+        /* تنسيق أزرار التثبيت الجديدة */
+        .install-btns-container { display: flex; gap: 10px; width: 90%; margin-top: 15px; }
+        .btn-install { flex: 1; font-size: 0.8rem; padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid var(--blue); }
+
         .alert-icon { 
             display: inline-block;
             color: #ffff00; 
@@ -124,6 +128,11 @@
             <option value="ثاني متوسط">ثاني متوسط</option>
         </select>
         <button class="btn" onclick="startApp()">انطلق للمختبر 🚀</button>
+        
+        <div class="install-btns-container">
+            <button class="btn btn-install" onclick="installAndroid()">🤖 تثبيت أندرويد</button>
+            <button class="btn btn-install" onclick="installIos()">🍎 تثبيت أيفون</button>
+        </div>
     </div>
 
     <div id="tabs-container" class="card">
@@ -174,6 +183,36 @@
 <audio id="sound-win" src="https://assets.mixkit.co/active_storage/sfx/1435/1435-preview.mp3"></audio>
 
 <script>
+    let deferredPrompt;
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+    });
+
+    function installAndroid() {
+        if (deferredPrompt) {
+            deferredPrompt.prompt();
+            deferredPrompt.userChoice.then((choiceResult) => {
+                if (choiceResult.outcome === 'accepted') {
+                    console.log('تم التثبيت بنجاح');
+                }
+                deferredPrompt = null;
+            });
+        } 
+        else {
+            const currentUrl = window.location.href;
+            navigator.clipboard.writeText(currentUrl).then(() => {
+                alert("للتثبيت المباشر:\n1. قم بفتح متصفح Google Chrome 🌐\n2. الصق رابط المنصة الذي تم نسخه الآن.\n3. اضغط على (تثبيت التطبيق) من قائمة الخيارات.");
+            }).catch(() => {
+                alert("يرجى نسخ رابط المنصة وفتحه في متصفح Google Chrome للتثبيت المباشر.");
+            });
+        }
+    }
+
+    function installIos() {
+        alert("تثبيت الأيفون (Safari):\n1. اضغط على زر المشاركة 📤 بالأسفل.\n2. اختر 'إضافة إلى الشاشة الرئيسية' (Add to Home Screen).");
+    }
+
     const SHEET_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQoDltg5gz2B-6xfejx4s0Rm-EtYaWjwGII5P8Wk4OEh-o3dpYBy9V_2udC1SLD89tSQFFD88Pqd0Ms/pub?gid=0&single=true&output=csv';
     const FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSd6qV0wUZIOTA3maN-KuBBhzivjeF0lCYD37-Ecr4FErVu6Xw/formResponse';
 
@@ -199,7 +238,6 @@
                     teacherName = allData[0]['المعلم'] || "...";
                     teacherPhone = allData[0]['الهاتف'] || "";
                     
-                    // تحديث العنوان من خانة "المنصة" إذا كانت موجودة
                     if(allData[0]['المنصة']) {
                         document.getElementById('platform-title').innerText = allData[0]['المنصة'];
                     }
@@ -210,14 +248,12 @@
                     document.getElementById('ui-manager-name').innerText = "المدير: " + managerName;
                     document.getElementById('ui-teacher-name').innerText = "المعلم: " + teacherName;
                     
-                    // التحميل المسبق للصور لضمان السرعة
                     preloadImages(allData);
                 }
             }
         });
     }
 
-    // دالة التحميل المسبق للصور
     function preloadImages(data) {
         data.forEach(item => {
             if(item['الصورة'] && item['الصورة'].trim() !== "") {
