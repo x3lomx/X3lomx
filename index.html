@@ -310,8 +310,17 @@
 
         document.getElementById('qText').innerText = q['السؤال'];
         const imgEl = document.getElementById('questionImg');
-        if(q['الصورة']) { imgEl.src = q['الصورة']; imgEl.style.display = 'block'; } else { imgEl.style.display = 'none'; }
-        
+if (q['الصورة'] && q['الصورة'].trim() !== "") {
+    let cleanUrl = q['الصورة'].trim();
+    // إضافة &.jpg إذا لم تكن موجودة لخداع المتصفح وإظهار الصورة
+    if (!cleanUrl.includes('&.jpg')) {
+        cleanUrl += '&.jpg';
+    }
+    imgEl.src = cleanUrl;
+    imgEl.style.display = 'block';
+} else {
+    imgEl.style.display = 'none';
+}        
         let wrongAnswersArray = q['إجابة خاطئة'] ? q['إجابة خاطئة'].split(/,|،/).map(item => item.trim()).filter(i => i !== "") : [];
         let opts = [q['الإجابة الصحيحة'], ...wrongAnswersArray];
         if(!isEducational) opts = opts.slice(0, 4).sort(() => Math.random() - 0.5); 
@@ -391,3 +400,4 @@
 </script>
 </body>
 </html>
+
